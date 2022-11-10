@@ -1,0 +1,27 @@
+plugins {
+    id 'java'
+}
+
+group 'org.lucdb'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // https://mavenlibs.com/maven/dependency/junit/junit
+    implementation 'junit:junit:4.13.2'
+    // https://mavenlibs.com/maven/dependency/org.apache.lucene/lucene-core
+    implementation 'org.apache.lucene:lucene-core:9.4.1'
+    // https://mavenlibs.com/maven/dependency/org.apache.lucene/lucene-analyzers-common
+    implementation 'org.apache.lucene:lucene-analyzers-common:8.11.2'
+    // https://mavenlibs.com/maven/dependency/org.apache.lucene/lucene-queryparser
+    implementation 'org.apache.lucene:lucene-queryparser:9.4.1'
+    // https://mavenlibs.com/maven/dependency/org.apache.lucene/lucene-queries
+    implementation 'org.apache.lucene:lucene-queries:9.4.1'
+}
+
+test {
+    useJUnitPlatform()
+}
