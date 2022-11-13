@@ -32,7 +32,15 @@ public class Search {
     // should eventually return a JSON to be passed back along to the middle-end
     public void makeSearch(String keyword) throws ParseException, IOException {
 
-        Query query = parser.parse(keyword);
+        String[] terms = keyword.split(" ");
+        StringBuilder fuzzy = new StringBuilder();
+
+        for (String term : terms){
+            term += "~ ";
+            fuzzy.append(term);
+        }
+
+        Query query = parser.parse(fuzzy.toString());
 
         var hits = isearcher.search(query, 10).scoreDocs;
         System.out.println("=======================================\nResults for '" + keyword + "'");
