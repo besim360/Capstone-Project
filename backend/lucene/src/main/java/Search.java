@@ -1,10 +1,10 @@
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.MultiFieldQueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder;
-import org.apache.lucene.search.*;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.store.*;
 import org.apache.lucene.index.DirectoryReader;
 
@@ -30,17 +30,9 @@ public class Search {
     }
 
     // should eventually return a JSON to be passed back along to the middle-end
-    public void generalSearch(String keyword) throws ParseException, IOException {
+    public void makeSearch(String keyword) throws ParseException, IOException {
 
-        String[] terms = keyword.split(" ");
-        StringBuilder fuzzy = new StringBuilder();
-
-        for (String term : terms){
-            term += "~ ";
-            fuzzy.append(term);
-        }
-
-        Query query = parser.parse(fuzzy.toString());
+        Query query = parser.parse(keyword);
 
         var hits = isearcher.search(query, 10).scoreDocs;
         System.out.println("=======================================\nResults for '" + keyword + "'");
@@ -49,5 +41,10 @@ public class Search {
             System.out.println(hitDoc.get("title"));
         }
         System.out.println("=======================================\n\n");
+    }
+
+    public ScoreDoc[] fuzzySearch(String keyword){
+        // break search into multiple pieces, using single field searches and then recombining them
+        return null;
     }
 }
