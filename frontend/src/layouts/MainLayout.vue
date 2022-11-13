@@ -31,18 +31,9 @@
   </q-layout>
 </template>
 
-<script>
+<script setup lang="ts">
 import { ref } from 'vue'
-
-export default {
-  setup () {
-    const leftDrawerOpen = ref(true)
-
-    return {
-      leftDrawerOpen,
-    }
-  }
-}
+const leftDrawerOpen = ref(true);
 </script>
 
 <style lang="scss" scoped>
