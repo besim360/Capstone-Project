@@ -1,26 +1,28 @@
 <template>
   <q-layout view="hHh LpR fFf">
 
-    <q-header reveal elevated class="bl-30 text-dark pl-0">
+    <q-header reveal elevated class="bl-30 text-dark">
       <div class="color-strip"></div>
-      <q-toolbar>
+      <q-toolbar class="rem-pad">
         <div class="bg-accent logo-bg">
           <img src="../assets/Icons/branding-iconography/wsu-icon.svg" class="center-aligned">
         </div>
         <q-toolbar-title>
-
-          Bibliography Application
+          WSU Technical Communication Search
         </q-toolbar-title>
         <q-space />
-        <q-tabs v-model="tab" shrink>
-          <q-tab name="search" label="Search" />
-          <q-tab name="bibliography" label="Bibliography" />
-          <q-tab name="upload" label="Upload" />
+        <q-tabs shrink>
+          <q-route-tab to="/search" label="Search" exact/>
+          <q-route-tab to="/bibliography" label="Bibliography" exact/>
+          <q-route-tab to="/upload" label="Upload" exact v-if="loggedIn"/>
+          <q-route-tab to="/results" label="Results" exact/>
         </q-tabs>
+        <q-btn v-if="loggedIn" @click="logoutHandler">Logout</q-btn>
+        <q-btn v-else @click="loginHandler">Sign In</q-btn>
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" side="left" overlay bordered>
+    <q-drawer v-model="openDrawer" side="left" overlay bordered persistent>
       drawer content
     </q-drawer>
 
@@ -32,8 +34,22 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-const leftDrawerOpen = ref(true);
+import { ref, computed } from 'vue'
+import { useRoute, useRouter } from 'vue-router';
+const route = useRoute();
+const router = useRouter()
+const openDrawer = computed(() => {
+  return loggedIn.value && !route.matched.some(({ name }) => name === 'home')
+})
+const loggedIn = ref(true);
+const loginHandler = () => {
+  loggedIn.value = true;
+  router.push('/search')
+}
+const logoutHandler = () => {
+  loggedIn.value = false;
+  router.push('/')
+}
 </script>
 
 <style lang="scss" scoped>
@@ -41,6 +57,9 @@ const leftDrawerOpen = ref(true);
   background-color: $bl-30
 }
 
+.rem-pad {
+  padding: 0 !important;
+}
 .color-strip {
   background-color: $primary;
   width: 100%;
