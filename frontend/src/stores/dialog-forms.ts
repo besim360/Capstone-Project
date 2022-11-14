@@ -61,6 +61,9 @@ export const useDialogStore = defineStore('dialog', {
     addAuthorToAdvancedSearch(author: Author) {
       this.fAdvSearchOptions.articleAuthors.push(author);
     },
+    setAuthors(authors: Array<Author>) {
+      this.fAdvSearchOptions.articleAuthors = authors;
+    },
     removeAuthorFromAdvancedSearch(author: Author) {
       const idx = this.fAdvSearchOptions.articleAuthors.indexOf(author)
       if(idx > -1){

@@ -17,8 +17,8 @@
           <q-route-tab to="/upload" label="Upload" exact v-if="loggedIn && isAdmin"/>
           <q-route-tab to="/results" label="Results" exact/>
         </q-tabs>
-        <q-btn v-if="loggedIn" @click="logoutHandler">Logout</q-btn>
-        <q-btn v-else @click="loginHandler">Sign In</q-btn>
+        <q-btn v-if="loggedIn" @click="logoutHandler" flat>Logout</q-btn>
+        <q-btn v-else @click="loginHandler" flat>Sign In</q-btn>
       </q-toolbar>
     </q-header>
 
