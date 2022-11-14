@@ -4,7 +4,7 @@
     <q-header reveal elevated class="bl-30 text-dark">
       <div class="color-strip"></div>
       <q-toolbar class="rem-pad">
-        <div class="bg-accent logo-bg">
+        <div class="bg-accent logo-bg" @click="goHome">
           <img src="../assets/Icons/branding-iconography/wsu-icon.svg" class="center-aligned">
         </div>
         <q-toolbar-title>
@@ -14,7 +14,7 @@
         <q-tabs shrink>
           <q-route-tab to="/search" label="Search" exact/>
           <q-route-tab to="/bibliography" label="Bibliography" exact/>
-          <q-route-tab to="/upload" label="Upload" exact v-if="loggedIn"/>
+          <q-route-tab to="/upload" label="Upload" exact v-if="loggedIn && isAdmin"/>
           <q-route-tab to="/results" label="Results" exact/>
         </q-tabs>
         <q-btn v-if="loggedIn" @click="logoutHandler">Logout</q-btn>
@@ -41,14 +41,28 @@ const router = useRouter()
 const openDrawer = computed(() => {
   return loggedIn.value && !route.matched.some(({ name }) => name === 'home')
 })
-const loggedIn = ref(true);
+const loggedIn = ref(false);
+const isAdmin = ref(false);
 const loginHandler = () => {
   loggedIn.value = true;
+  isAdmin.value = checkIsAdmin('in');
   router.push('/search')
 }
 const logoutHandler = () => {
   loggedIn.value = false;
+  isAdmin.value = checkIsAdmin('out');
   router.push('/')
+}
+const goHome = () => {
+  router.push('/')
+}
+
+const checkIsAdmin = (lType: string) => {
+  if(lType==='in'){
+    return true;
+  } else {
+    return false;
+  };
 }
 </script>
 
