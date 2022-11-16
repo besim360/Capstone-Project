@@ -11,12 +11,12 @@ import json
 app = FastAPI()
 global mongoDB
 #fill in username and password 
-mongoDB = mongoDemo.db_cluster("mongodb+srv://besim:honda2008@cluster0.8c102fm.mongodb.net/test","capstone","user_history")
+mongoDB = mongoDemo.db_cluster("mongodb+srv://admin:admin@cluster0.8c102fm.mongodb.net/test","capstone","user_history")
 
-class user_search(BaseModel):
-    uid:str
-    query:str
-    results:List[str]
+class user_search(BaseModel):   #User ID comes from keycloak
+    search_uid:str                     #ID for user_history entry
+    query:str                   #Query string
+    results:List[str]           #List of documents returned 
 
 class user_bookmark(BaseModel):
     uid:str
@@ -39,7 +39,7 @@ def get_user_history(user_id:str):
 #add history entry
 @app.post("/history")
 async def create_item(user_search: user_search):
-    mongoDB.insert_one_entry(user_search.uid,user_search.query,user_search.results)
+    mongoDB.insert_one_entry(user_search.search_uid,user_search.query,user_search.results)
     return user_search
 
 #delete history entry
