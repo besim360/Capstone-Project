@@ -59,13 +59,15 @@ class db_cluster(object):
 			print("Error getting collection")
 
 	#insert entry into db		
-	def insert_one_entry(self,doc_id):
+	def insert_one_entry(self,uid,query,results):
 		try:
 			today = date.today()
 			d1 = today.strftime("%d/%m/%Y")
 			entry = {
-			"_id" : str(uuid.uuid4()),
-			"article_uuid" : doc_id,
+			"user_id" : uid,
+			"query" : query,
+			"results":results,
+			"_id":str(uuid.uuid4()),
 			"date" : d1
 			}
 			print(entry)
@@ -75,7 +77,7 @@ class db_cluster(object):
 
 	#get entry by user id		
 	def get_entry_by_uid(self,uid):
-		result = self.collection.find_one({"_id": uid})
+		result = self.collection.find({"user_id": uid})
 		return result
 
 	#get all entries in collection

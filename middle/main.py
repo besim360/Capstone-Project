@@ -1,19 +1,31 @@
 from fastapi import FastAPI
 import mongoDemo
 from pydantic import BaseModel
+from typing import List, Optional
 import json
+
+#Start server with uvicorn main:app --reload
+
+#Use apis at http://127.0.0.1:8000/docs -- Has a really nice UI to test API calls
 
 app = FastAPI()
 global mongoDB
 #fill in username and password 
-mongoDB = mongoDemo.db_cluster("mongodb+srv://<username>:<password>@cluster0.8c102fm.mongodb.net/test","capstone","user_history")
+mongoDB = mongoDemo.db_cluster("mongodb+srv://besim:honda2008@cluster0.8c102fm.mongodb.net/test","capstone","user_history")
 
-class Item(BaseModel):
-    doc_id: str
+class user_search(BaseModel):
+    uid:str
+    query:str
+    results:List[str]
+
+class user_bookmark(BaseModel):
+    uid:str
+    
+
 
 #get all history for user
-@app.get("/get_user_history/{user_id}")
-def get_players(user_id:str):
+@app.get("/history/{user_id}")
+def get_user_history(user_id:str):
     results = list()
     q = mongoDB.get_entry_by_uid(user_id)
     if type(q) is not dict:
@@ -25,11 +37,12 @@ def get_players(user_id:str):
     return results_json
 
 #add history entry
-@app.post("/add/")
-async def create_item(item: Item):
-    mongoDB.insert_one_entry(item.doc_id)
-    return item
+@app.post("/history")
+async def create_item(user_search: user_search):
+    mongoDB.insert_one_entry(user_search.uid,user_search.query,user_search.results)
+    return user_search
+
 #delete history entry
-@app.delete("/delete/{user_id}")
+@app.delete("/history/{user_id}")
 async def delete_user_history(user_id:str):
     mongoDB.delete_entry(user_id)
