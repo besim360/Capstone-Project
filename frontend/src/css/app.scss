@@ -1,1 +1,7 @@
 // app global css in SCSS form
+@import url(../assets/fonts/static/Montserrat.css);
+
+
+body {
+  font-family: Montserrat, sans-serif;
+}
