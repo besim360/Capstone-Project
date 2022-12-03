@@ -1,56 +1,80 @@
-package hibernatesearch;
+package com.capgroup.spring;
 
-import org.hibernate.search.annotations.*;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 
 
 @Entity
 @Indexed
 @Table(name = "article")
 public class Article {
+
+    public Article(Long id, String title, String authors, String sourceAbbrev, String sourceLong, String volNum,
+                   String date, int startYear, int endYear, String pages, String subjectCodes, String topics, String doi){
+        this.id = id;
+        this.title = title;
+        this.authors = authors;
+        this.sourceAbbrev = sourceAbbrev;
+        this.sourceLong = sourceLong;
+        this.volNum = volNum;
+        this.date = date;
+        this.startYear = startYear;
+        this.endYear = endYear;
+        this.pages = pages;
+        this.subjectCodes = subjectCodes;
+        this.topics = topics;
+        this.doi = doi;
+    }
+
     public Article() {
     }
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Field
+    @FullTextField
     private String title;
 
-    @Field
+    @FullTextField
     private String authors;
 
-    @Field
+    @FullTextField
     private String sourceAbbrev;
 
-    @Field
+    @FullTextField
     private String sourceLong;
 
-    @Field
+    @FullTextField
     private String volNum;
 
-    @Field
+    @FullTextField
     private String date;
 
-    @Field
+    @GenericField
     private int startYear;
 
-    @Field
+    @GenericField
     private int endYear;
 
-    @Field
+    @FullTextField
     private String pages;
 
-    @Field
+    @FullTextField
     private String subjectCodes;
 
-    @Field
+    @FullTextField
     private String topics;
 
-    @Field
+    @FullTextField
     private String doi;
 
     public Long getId() {
