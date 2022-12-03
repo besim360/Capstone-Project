@@ -1,13 +1,13 @@
-package com.middle.javapi;
+package hibernatesearch;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class JavapiApplication {
+public class Application {
 
 	public static void main(String[] args) {
-		SpringApplication.run(JavapiApplication.class, args);
+		SpringApplication.run(Application.class, args);
 	}
 
 }

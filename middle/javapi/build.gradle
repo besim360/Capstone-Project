@@ -19,6 +19,8 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	// https://mavenlibs.com/maven/dependency/org.hibernate/hibernate-search-orm
 	implementation 'org.hibernate:hibernate-search-orm:5.11.11.Final'
+	// https://mavenlibs.com/maven/dependency/org.hibernate.search/hibernate-search-backend-lucene
+	implementation 'org.hibernate.search:hibernate-search-backend-lucene:6.1.7.Final'
 }
 
 tasks.named('test') {
