@@ -31,7 +31,7 @@ public class Application {
 			article1.setStartYear(2000);
 			article1.setEndYear(2000);
 			article1.setSubjectCodes("d60");
-			//article1.setTopics("web page construction, web design, intranet design, online");
+			article1.setTopics("web page construction, web design, intranet design, online");
 
 			Article article2 = new Article();
 			article2.setTitle("Regulatory Usability");
@@ -42,7 +42,7 @@ public class Application {
 			article2.setStartYear(2000);
 			article2.setEndYear(2000);
 			article2.setSubjectCodes("d60, d4, b62");
-			//article2.setTopics("web page construction, web design, intranet design, online, usability, usability testing, users, user-centered, UX, focus groups, ergonomics, human factors, legal writing, laws, legalities, contracts, letters of agreement, regulations, censorship, lawyers, law enforcement, police, crime, dishonesty, genocide, society, editing");
+			article2.setTopics("web page construction, web design, intranet design, online, usability, usability testing, users, user-centered, UX, focus groups, ergonomics, human factors, legal writing, laws, legalities, contracts, letters of agreement, regulations, censorship, lawyers, law enforcement, police, crime, dishonesty, genocide, society, editing");
 
 			Article article3 = new Article();
 			article3.setTitle("His Master's Voice: Tiro and the Rise of the Roman Secretarial Class");
@@ -56,7 +56,7 @@ public class Application {
 			article3.setPages("155-168");
 			article3.setDoi("10.2190/B4YD-5FP7-1W8D-V3UC");
 			article3.setSubjectCodes("b49, c572, c649");
-			//article3.setTopics("history of technical communication, history of writing, history, personal names, cicero, rome, roman, place names");
+			article3.setTopics("history of technical communication, history of writing, history, personal names, cicero, rome, roman, place names");
 			List<Article> articles = Arrays.asList(article1, article2, article3);
 			articleRepository.saveAll(articles);
 		};

@@ -12,11 +12,8 @@
     </annotationProcessing>
     <bytecodeTargetLevel>
       <module name="javapi" target="17" />
-      <module name="javapi.main" target="17" />
-      <module name="javapi.test" target="17" />
       <module name="lucene" target="17" />
-      <module name="lucene.main" target="17" />
-      <module name="lucene.test" target="17" />
+      <module name="spring-boot-hibernate-search" target="11" />
       <module name="spring.main" target="17" />
       <module name="spring.test" target="17" />
     </bytecodeTargetLevel>

@@ -73,7 +73,7 @@ public class Article {
     private String subjectCodes;
 
     @FullTextField
-    @Column(name = "topics")
+    @Column(name = "topics", length=1024)
     private String topics;
 
     @FullTextField
