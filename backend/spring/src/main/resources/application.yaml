@@ -13,4 +13,4 @@ spring:
         search:
           backend:
             type: lucene
-            directory.root: ./middle/spring/data/index
+            directory.root: ./backend/spring/data/index
