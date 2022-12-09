@@ -11,7 +11,7 @@
           WSU Technical Communication Search
         </q-toolbar-title>
         <q-space />
-        <q-tabs shrink>
+        <q-tabs shrink indicator-color="primary">
           <q-route-tab to="/search" label="Search" exact/>
           <q-route-tab to="/bibliography" label="Bibliography" exact/>
           <q-route-tab to="/upload" label="Upload" exact v-if="loggedIn && isAdmin"/>
