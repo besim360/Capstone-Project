@@ -7,6 +7,9 @@ import org.springframework.stereotype.Service;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * The business layer that forwards the call to the searchBy function
+ */
 @Service
 public class ArticleService {
     private ArticleRepository articleRepository;

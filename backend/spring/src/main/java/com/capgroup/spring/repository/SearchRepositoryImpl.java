@@ -11,7 +11,9 @@ import jakarta.persistence.EntityManager;
 import java.io.Serializable;
 import java.util.List;
 
-
+/**
+ * Handles interactions between Hibernate and Spring, Hibernate search methods will be defined in here for AND, NOT, OR
+ */
 @Transactional
 public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID>
         implements SearchRepository<T, ID> {

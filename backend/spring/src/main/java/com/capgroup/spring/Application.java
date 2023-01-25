@@ -103,6 +103,7 @@ public class Application {
 
 			List<Article> articles = Arrays.asList(article1, article2, article3, article4, article5);
 			articleRepository.saveAll(articles);
+			//articleRepository.findAll();
 		};
 	}
 

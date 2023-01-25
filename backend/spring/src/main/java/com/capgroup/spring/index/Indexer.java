@@ -8,6 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import jakarta.persistence.EntityManager;
 
+/**
+ * Wrapper for all Lucene index operations
+ */
 @Transactional
 @Component
 public class Indexer {
