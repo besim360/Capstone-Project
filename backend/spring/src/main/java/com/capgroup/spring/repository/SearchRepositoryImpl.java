@@ -11,7 +11,9 @@ import jakarta.persistence.EntityManager;
 import java.io.Serializable;
 import java.util.List;
 
-
+/**
+ * Handles interactions between Hibernate and Spring, Hibernate search methods will be defined in here for AND, NOT, OR
+ */
 @Transactional
 public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID>
         implements SearchRepository<T, ID> {
@@ -42,7 +44,7 @@ public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaR
         SearchResult<T> result =
                 searchSession
                         .search(getDomainClass())
-                        .where(f -> f.match().fields(fields).matching(text).fuzzy(2))
+                        .where(f -> f.match().fields(fields).matching(text).fuzzy(1))
                         .fetch(limit);
         return result;
     }

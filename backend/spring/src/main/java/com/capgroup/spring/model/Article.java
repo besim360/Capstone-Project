@@ -10,6 +10,8 @@ import lombok.ToString;
 import jakarta.persistence.*;
 
 
+/**
+ * Our main entity being stored in Hibernate, contains all the data related to a specific article to be stored in the database */
 @Entity
 @Indexed
 @Table(name = "article")
@@ -17,7 +19,9 @@ import jakarta.persistence.*;
 @Setter
 @ToString
 @EqualsAndHashCode
+
 public class Article {
+
 
     public Article(String title, String authors) {
         this.title = title;
@@ -33,7 +37,7 @@ public class Article {
     private Long id;
 
     @FullTextField
-    @Column(name = "title")
+    @Column(name = "title", length = 512)
     private String title;
 
     @FullTextField
@@ -73,7 +77,7 @@ public class Article {
     private String subjectCodes;
 
     @FullTextField
-    @Column(name = "topics", length=1024)
+    @Column(name = "topics", length=2048)
     private String topics;
 
     @FullTextField
