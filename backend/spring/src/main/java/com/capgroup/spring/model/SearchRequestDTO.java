@@ -7,6 +7,9 @@ import jakarta.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data Transfer Object where searching arguments are defined
+ */
 @Data
 public class SearchRequestDTO {
 

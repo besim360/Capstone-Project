@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * REST API controller that receives HTTP requests from clients
+ */
 @Slf4j
 @RestController
 @RequestMapping("/article")
