@@ -33,7 +33,7 @@ public class Article {
     private Long id;
 
     @FullTextField
-    @Column(name = "title")
+    @Column(name = "title", length = 512)
     private String title;
 
     @FullTextField
@@ -73,7 +73,7 @@ public class Article {
     private String subjectCodes;
 
     @FullTextField
-    @Column(name = "topics", length=1024)
+    @Column(name = "topics", length=2048)
     private String topics;
 
     @FullTextField

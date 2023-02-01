@@ -21,9 +21,9 @@ public class ArticleController {
     }
 
     @GetMapping("/search")
-    public List<Article> searchPlants(SearchRequestDTO searchRequestDTO) {
+    public List<Article> searchArticles(SearchRequestDTO searchRequestDTO) {
 
-        log.info("Request for plant search received with data : " + searchRequestDTO);
+        log.info("Request for article search received with data : " + searchRequestDTO);
 
         return articleService.searchArticles(searchRequestDTO.getText(), searchRequestDTO.getFields(), searchRequestDTO.getLimit());
     }
