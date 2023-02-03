@@ -1,15 +1,13 @@
 import pymongo
-import uuid
-from pymongo.mongo_client import MongoClient
-from pymongo.server_api import ServerApi	
+import uuid	
 from datetime import date
 
 class db_cluster(object):
-	def __init__(self,conn_str,db_name,collection_name):
+	def __init__(self,conn_str):
 		super(db_cluster, self).__init__()
 		self.client_conn = self.connect(conn_str)
-		self.DB = self.get_db(db_name)
-		self.collection = self.get_collection(collection_name)
+		#self.DB = self.get_db(db_name)
+		#self.collection = self.get_collection(collection_name)
 
 	def connect(self,conn_str):
 		# set a 5-second connection timeout
@@ -84,7 +82,12 @@ class db_cluster(object):
 	def get_all_entries(self):
 		results = self.collection.find({})
 		return results
+	def set_database(self,database_name):
+		self.DB = self.get_db(database_name)
 
+	def set_collection(self,collection_name):
+		self.collection = self.get_collection(collection_name)
+		
 	#Delete entry in DB given the UID, DB name and collection name  
 	def delete_entry(self,entry_id):
 		collection = self.collection
