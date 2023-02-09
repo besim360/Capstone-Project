@@ -34,11 +34,44 @@
         We attempt to include all relevant articles, for example, from IEEE Transactions on Professional Communication,
         Information Design Journal, Journal of Business and Technical Communication,
         Journal of Technical Writing and Communication, NNgroup.com (Jakob Nielsen and Donald Norman), Rhetoric Review,
-        Technical Communication, Technical Communication Quarterly, and Written Communication. See our complete list of sources.
+        Technical Communication, Technical Communication Quarterly, and Written Communication. <a href="">See our complete list of sources.</a>
       </div>
     </div>
     <div class="ribbon bg-primary feedback-ribbon row">
-      <div class="row" style="width: 50% !important;">
+      <div class="row" style="width: 50% !important">
+        <div class="col-12" style="padding-bottom: 25px">
+          <h6 style="color: white;">Overall, how happy are you with the software?</h6>
+        </div>
+        <div class="col-1 offset-1 happiness-indicator">
+          <span class="i-span" value="1">1</span>
+        </div>
+        <div class="col-1 happiness-indicator">
+          <span class="i-span" value="2">2</span>
+        </div>
+        <div class="col-1 happiness-indicator">
+          <span class="i-span" value="3">3</span>
+        </div>
+        <div class="col-1 happiness-indicator">
+          <span class="i-span" value="4">4</span>
+        </div>
+        <div class="col-1 happiness-indicator">
+          <span class="i-span" value="5">5</span>
+        </div>
+        <div class="col-1 happiness-indicator">
+          <span class="i-span" value="6">6</span>
+        </div>
+        <div class="col-1 happiness-indicator">
+          <span class="i-span" value="7">7</span>
+        </div>
+        <div class="col-1 happiness-indicator">
+          <span class="i-span" value="8">8</span>
+        </div>
+        <div class="col-1 happiness-indicator">
+          <span class="i-span" value="9">9</span>
+        </div>
+        <div class="col-1 happiness-indicator">
+          <span class="i-span" value="10">10</span>
+        </div>
         <div class="col-6" style="padding-bottom: 25px">
           <h6 style="color: white;">Send us your comments and suggestions</h6>
           <q-input v-model="email" label="Email" label-color="white" color="white" filled dark/>
@@ -119,6 +152,27 @@ const guestSearchHandler = () => {
   width: 50%;
 }
 .feedback-ribbon {
-  height: 600px !important;
+  height: 800px !important;
+}
+
+.happiness-indicator {
+  height: 80px;
+  background-color: $bl-70;
+  border-style: solid;
+  border-color: $bl-30;
+  border-width: 2px;
+  text-align: center;
+  line-height: 80px;
+  .i-span {
+    font-size: x-large;
+    display: inline-block;
+    vertical-align: middle;
+    line-height: normal;
+    color: $bl-30;
+  }
+}
+
+.active {
+  background-color: $bl-60;
 }
 </style>
