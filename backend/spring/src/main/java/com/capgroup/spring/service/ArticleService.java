@@ -33,4 +33,11 @@ public class ArticleService {
         return articleRepository.searchBy(
                 text, limit, fieldsToSearchBy.toArray(new String[0]));
     }
+
+    public void addArticle(Article article){
+        //do stuff
+    }
+    public void deleteArticle(Long id){ //likely rename to only pass article id
+        //do stuff
+    }
 }
