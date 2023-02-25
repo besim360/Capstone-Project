@@ -4,7 +4,6 @@ import com.capgroup.spring.model.Article;
 import com.capgroup.spring.model.SearchRequestDTO;
 import com.capgroup.spring.service.ArticleService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,20 +15,25 @@ import java.util.List;
 @RestController
 @RequestMapping("/article")
 public class ArticleController {
-    private ArticleService articleService;
+    private final ArticleService articleService;
 
     public ArticleController(ArticleService articleService) {
         this.articleService = articleService;
     }
 
-    @PutMapping("/admin/addArticle") //look at how to integrate DTO here
-    @PreAuthorize("hasRole('admin')")
+    @PostMapping("/admin/addArticle") //look at how to integrate DTO here
     public @ResponseBody String addArticle(@RequestBody Article article){
         articleService.addArticle(article); //will need to check for failure and return different statuses
-        return "Article added.";
+        return "Article added."; //return contents of article added and response status
     }
+    /*public ResponseEntity<?> addArticle(HttpServletRequest request) { //role we are looking for is 'admin'
+        request.getHeader("Authorization");
+    }*/
+    /*public void testing(){
+        log.info("accessed addArticle!");
+    }*/
+    //@PutMapping("/admin/updateArticle/") //
     @DeleteMapping("/admin/{articleId}")
-    @PreAuthorize("hasRole('admin')")
     public void deleteArticle(@PathVariable Long articleId){
         this.articleService.deleteArticle(articleId);
     }

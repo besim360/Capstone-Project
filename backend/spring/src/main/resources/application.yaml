@@ -16,7 +16,6 @@ spring:
             directory.root: ./backend/spring/data/index
   security:
     oauth2:
-      client:
-        provider:
-          keycloak:
-            issuer-uri: http://localhost:8080/realms/cs420
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/cs420
