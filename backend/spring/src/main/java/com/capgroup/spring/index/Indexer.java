@@ -1,5 +1,6 @@
 package com.capgroup.spring.index;
 
+import org.hibernate.Session;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.massindexing.MassIndexer;
 import org.hibernate.search.mapper.orm.session.SearchSession;
@@ -28,8 +29,7 @@ public class Indexer {
             SearchSession searchSession = Search.session(entityManager);
 
             Class<?> classToIndex = Class.forName(indexClassName);
-            MassIndexer indexer =
-                    searchSession
+            MassIndexer indexer = searchSession
                             .massIndexer(classToIndex)
                             .threadsToLoadObjects(THREAD_NUMBER);
 

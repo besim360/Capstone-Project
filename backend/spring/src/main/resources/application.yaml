@@ -3,13 +3,17 @@ server:
 
 spring:
   datasource:
-    url: jdbc:h2:mem:mydb
+    url: jdbc:h2:file:./backend/database/h2
     username: capstone
     password: password
+
   jpa:
+    hibernate:
+      ddl-auto: update
     open-in-view: false
     properties:
       hibernate:
+
         search:
           backend:
             type: lucene

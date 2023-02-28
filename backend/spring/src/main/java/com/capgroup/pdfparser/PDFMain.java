@@ -13,6 +13,9 @@ public class PDFMain {
      */
     public static String parseFile(File pdfFile) throws IOException {
         PDDocument doc = PDDocument.load(pdfFile);
-        return new PDFTextStripper().getText(doc);
+        String text = new PDFTextStripper().getText(doc);
+        doc.close();
+        //System.out.println(text);
+        return text;
     }
 }

@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import jakarta.persistence.*;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
 
 
 /**
@@ -83,4 +84,9 @@ public class Article {
     @FullTextField
     @Column(name = "doi")
     private String doi;
+
+    //@KeywordField
+    @FullTextField
+    @Column(name = "fullText", length=200000) // Use a different field/ length so this is not so big and wasteful
+    private String fullText;
 }
