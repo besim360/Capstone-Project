@@ -1,6 +1,7 @@
 package com.capgroup.spring.controller;
 
 import com.capgroup.spring.model.Article;
+import com.capgroup.spring.model.BooleanRequestDTO;
 import com.capgroup.spring.model.SearchRequestDTO;
 import com.capgroup.spring.service.ArticleService;
 import lombok.extern.slf4j.Slf4j;
@@ -47,8 +48,15 @@ public class ArticleController {
     @GetMapping("/search")
     public List<Article> searchArticles(SearchRequestDTO searchRequestDTO) {
 
-        log.info("Request for article search received with data : " + searchRequestDTO);
+        log.info("Request for article search received with data: " + searchRequestDTO);
 
         return articleService.searchArticles(searchRequestDTO.getText(), searchRequestDTO.getFields(), searchRequestDTO.getLimit());
+    }
+
+    @GetMapping("/bool")
+    public List<Article> boolSearchArticles(BooleanRequestDTO booleanRequestDTO){
+        log.info("Request for boolean article search received with data: " + booleanRequestDTO);
+        return articleService.boolSearchArticles(booleanRequestDTO.getText(), booleanRequestDTO.getBoolOps(),
+                booleanRequestDTO.getFields(), booleanRequestDTO.getLimit());
     }
 }

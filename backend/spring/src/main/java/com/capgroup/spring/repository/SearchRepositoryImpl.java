@@ -1,5 +1,11 @@
 package com.capgroup.spring.repository;
 
+import com.capgroup.spring.model.Article;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.TermQuery;
+import org.hibernate.search.backend.lucene.LuceneExtension;
 import org.hibernate.search.engine.search.query.SearchResult;
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.session.SearchSession;
@@ -47,5 +53,48 @@ public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaR
                         .where(f -> f.match().fields(fields).matching(text).fuzzy(1))
                         .fetch(limit);
         return result;
+    }
+
+    @Override
+    public List boolSearchBy(List<String> text, List<String> boolOps, List<String> fields, int limit){
+        return getBoolSearchResult(text, boolOps, fields, limit);
+    }
+
+    private List<Article> getBoolSearchResult(List<String> text, List<String> boolOps, List<String> fields, int limit){
+        SearchSession searchSession = Search.session(entityManager);
+        BooleanQuery.Builder b = new BooleanQuery.Builder();
+
+        int clauses = 0;
+        for (int i = 0; i < text.size(); i++){
+
+            String t = text.get(i);
+            String field = fields.get(i);
+            TermQuery termQuery = new TermQuery(new Term(field, t));
+            String op = boolOps.get(i);
+
+            if (op.toLowerCase().equals("not")) {
+                b.add(termQuery, BooleanClause.Occur.MUST_NOT);
+                clauses++;
+            } else if (op.toLowerCase().equals("and")){
+                b.add(termQuery, BooleanClause.Occur.MUST);
+                clauses++;
+
+            } else if (op.toLowerCase().equals("or")){
+                b.add(termQuery, BooleanClause.Occur.SHOULD);
+                clauses++;
+            }
+
+        }
+
+        //b.setMinimumNumberShouldMatch(clauses);
+        BooleanQuery bq = b.build();
+        List<Article> hits =
+                searchSession
+                        .search(Article.class)
+                        .extension(LuceneExtension.get())
+                        .where(f -> f.fromLuceneQuery(bq))
+                        .fetchHits(limit);
+
+        return hits;
     }
 }

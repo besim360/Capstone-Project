@@ -40,4 +40,16 @@ public class ArticleService {
     public void deleteArticle(Long id){ //likely rename to only pass article id
         articleRepository.deleteById(id); //may need to wrap in a try/catch
     }
+
+    public List<Article> boolSearchArticles(List<String> text, List<String> boolOps, List<String> fields, int limit){
+
+        List<String> fieldsToSearchBy = fields.isEmpty() ? SEARCHABLE_FIELDS : fields;
+
+        boolean containsInvalidField = fields.stream(). anyMatch(f -> !SEARCHABLE_FIELDS.contains(f));
+        if (containsInvalidField){
+            throw new IllegalArgumentException();
+        }
+
+        return articleRepository.boolSearchBy(text, boolOps, fieldsToSearchBy, limit);
+    }
 }
