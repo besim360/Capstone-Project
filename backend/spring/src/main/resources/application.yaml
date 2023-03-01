@@ -1,5 +1,5 @@
 server:
-  port: 9000
+  port: 9001
 
 spring:
   datasource:
@@ -18,3 +18,8 @@ spring:
           backend:
             type: lucene
             directory.root: ./backend/spring/data/index
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/cs420

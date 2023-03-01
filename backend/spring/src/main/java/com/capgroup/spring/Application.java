@@ -9,6 +9,8 @@ import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 
 import java.util.ArrayList;
@@ -16,9 +18,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
 
-// http://localhost:9000/article/search?text=query&limit=5
+// http://localhost:9001/article/search?text=query&limit=5
 
-@SpringBootApplication
+@SpringBootApplication(exclude = {SecurityAutoConfiguration.class, UserDetailsServiceAutoConfiguration.class}) //these are excluded so there is no auto-password generation on startup for a basic query
 public class Application {
 
 
