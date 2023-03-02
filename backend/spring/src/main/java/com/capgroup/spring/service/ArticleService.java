@@ -34,8 +34,79 @@ public class ArticleService {
                 text, limit, fieldsToSearchBy.toArray(new String[0]));
     }
 
-    public void addArticle(Article article){ //can create article here, then save
-        articleRepository.saveAndFlush(article);
+    public void addArticle(String title, String authors, String sourceAbbrev, String sourceLong, String volNum, String date, Integer startYear, Integer endYear, String pages, String subjectCodes, String doi){ //can create article here, then save
+        Article article = new Article();
+        if(title != null){
+            article.setTitle(title);
+        }
+        if(authors != null){
+            article.setAuthors(authors);
+        }
+        if(sourceAbbrev != null){
+            article.setSourceAbbrev(sourceAbbrev);
+        }
+        if(sourceLong != null){
+            article.setSourceLong(sourceLong);
+        }
+        if(volNum != null){
+            article.setVolNum(volNum);
+        }
+        if(date != null){
+            article.setDate(date);
+        }
+        if(startYear != null){
+            article.setStartYear(startYear.intValue());
+        }
+        if(endYear != null){
+            article.setEndYear(endYear.intValue());
+        }
+        if(pages != null){
+            article.setPages(pages);
+        }
+        if(subjectCodes != null){
+            article.setSubjectCodes(subjectCodes);
+        }
+        if(doi != null){
+            article.setDoi(doi);
+        }
+
+        articleRepository.save(article);
+    }
+    public void updateArticle(Long id, String title, String authors, String sourceAbbrev, String sourceLong, String volNum, String date, Integer startYear, Integer endYear, String pages, String subjectCodes, String doi){
+        Article article = articleRepository.getReferenceById(id);
+        if(title != null){
+            article.setTitle(title);
+        }
+        if(authors != null){
+            article.setAuthors(authors);
+        }
+        if(sourceAbbrev != null){
+            article.setSourceAbbrev(sourceAbbrev);
+        }
+        if(sourceLong != null){
+            article.setSourceLong(sourceLong);
+        }
+        if(volNum != null){
+            article.setVolNum(volNum);
+        }
+        if(date != null){
+            article.setDate(date);
+        }
+        if(startYear != null){
+            article.setStartYear(startYear.intValue());
+        }
+        if(endYear != null){
+            article.setEndYear(endYear.intValue());
+        }
+        if(pages != null){
+            article.setPages(pages);
+        }
+        if(subjectCodes != null){
+            article.setSubjectCodes(subjectCodes);
+        }
+        if(doi != null){
+            article.setDoi(doi);
+        }
     }
     public void deleteArticle(Long id){ //likely rename to only pass article id
         articleRepository.deleteById(id); //may need to wrap in a try/catch

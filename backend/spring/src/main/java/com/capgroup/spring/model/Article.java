@@ -23,10 +23,10 @@ import jakarta.persistence.*;
 public class Article {
 
 
-    public Article(String title, String authors) {
+    /*public Article(String title, String authors) {
         this.title = title;
         this.authors = authors;
-    }
+    }*/
 
     public Article() {
     }
@@ -37,7 +37,7 @@ public class Article {
     private Long id;
 
     @FullTextField
-    @Column(name = "title", length = 512)
+    @Column(name = "title", columnDefinition = "VARCHAR(512)")
     private String title;
 
     @FullTextField
@@ -77,7 +77,7 @@ public class Article {
     private String subjectCodes;
 
     @FullTextField
-    @Column(name = "topics", length=2048)
+    @Column(name = "topics", columnDefinition = "VARCHAR(2048)")
     private String topics;
 
     @FullTextField
