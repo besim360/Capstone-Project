@@ -23,8 +23,11 @@ public class ArticleController {
     }
 
     @PostMapping("/admin/addArticle") //look at how to integrate DTO here
-    public @ResponseBody String addArticle(@RequestBody Article article){
-        articleService.addArticle(article); //will need to check for failure and return different statuses
+    public @ResponseBody String addArticle(ArticleDTO articleDTO){
+        articleService.addArticle(articleDTO.getTitle(), articleDTO.getAuthors(),
+                articleDTO.getSourceAbbrev(), articleDTO.getSourceLong(), articleDTO.getVolNum(),
+                articleDTO.getDate(), articleDTO.getStartYear(), articleDTO.getEndYear(), articleDTO.getPages(),
+                articleDTO.getSubjectCodes(), articleDTO.getDoi());
         return "Article added."; //return contents of article added and response status
     }
     /*public ResponseEntity<?> addArticle(HttpServletRequest request) { //role we are looking for is 'admin'
@@ -33,7 +36,14 @@ public class ArticleController {
     /*public void testing(){
         log.info("accessed addArticle!");
     }*/
-    //@PutMapping("/admin/updateArticle/") //
+    @PutMapping("/admin/updateArticle/{articleId}")
+    public @ResponseBody String updateArticle(@PathVariable Long articleId, ArticleDTO articleDTO){
+        articleService.updateArticle(articleId, articleDTO.getTitle(), articleDTO.getAuthors(),
+                articleDTO.getSourceAbbrev(), articleDTO.getSourceLong(), articleDTO.getVolNum(),
+                articleDTO.getDate(), articleDTO.getStartYear(), articleDTO.getEndYear(), articleDTO.getPages(),
+                articleDTO.getSubjectCodes(), articleDTO.getDoi());
+        return "Article updated."; //return contents of article added and response status
+    }
     @DeleteMapping("/admin/{articleId}")
     public void deleteArticle(@PathVariable Long articleId){
         this.articleService.deleteArticle(articleId);
@@ -48,7 +58,7 @@ public class ArticleController {
     @GetMapping("/search")
     public List<Article> searchArticles(SearchRequestDTO searchRequestDTO) {
 
-        log.info("Request for article search received with data: " + searchRequestDTO);
+        log.info("Request for article search received with data : " + searchRequestDTO);
 
         return articleService.searchArticles(searchRequestDTO.getText(), searchRequestDTO.getFields(), searchRequestDTO.getLimit());
     }
