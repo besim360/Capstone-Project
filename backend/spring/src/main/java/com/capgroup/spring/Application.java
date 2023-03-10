@@ -28,12 +28,13 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 	}
 
-	/*
+/*
 	@Bean
 	public ApplicationRunner initializeData(ArticleRepository articleRepository) throws Exception {
 		return (ApplicationArguments args) -> {
 
-			ArrayList<Article> articles = DataInput.enterData("backend/excelfiles/MainForm.xlsx");
+			ArrayList<Article> articles = DataInput.enterData("backend/excelfiles/MainForm.xlsx",
+					"backend/excelfiles/Sources.xlsx", "backend/excelfiles/Subjects.xlsx", "backend/pdfs/");
 			articleRepository.saveAllAndFlush(articles);
 
 		};
@@ -46,6 +47,6 @@ public class Application {
 			indexer.indexPersistedData("com.capgroup.spring.model.Article");
 		};
 	}
-	 */
 
+ */
 }

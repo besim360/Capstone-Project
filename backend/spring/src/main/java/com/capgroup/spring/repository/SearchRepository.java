@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.NoRepositoryBean;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -14,5 +15,7 @@ import java.util.List;
 public interface SearchRepository <T, ID extends Serializable> extends JpaRepository<T, ID> {
     List<T> searchBy(String text, int limit, String... fields);
 
-    List<T> boolSearchBy(List<String> text, List<String> boolOps, List<String> fields, int limit);
+    List boolSearchBy(ArrayList<List<String>> queries, int limit);
+
+    //List<T> boolSearchBy(List<String> text, List<String> boolOps, List<String> fields, int limit);
 }

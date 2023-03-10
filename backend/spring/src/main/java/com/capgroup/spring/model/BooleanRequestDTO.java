@@ -17,6 +17,12 @@ import java.util.List;
 public class BooleanRequestDTO {
 
     @NotBlank
+    private List<String> query_one = new ArrayList<>();
+    private List<String> query_two = new ArrayList<>();
+    private List<String> query_three = new ArrayList<>();
+
+    /*
+    @NotBlank
     private List<String> text = new ArrayList<>();
 
     @NotBlank
@@ -24,6 +30,8 @@ public class BooleanRequestDTO {
 
     @NotBlank
     private List<String> fields = new ArrayList<>();
+
+     */
 
     @Min(1)
     private int limit;

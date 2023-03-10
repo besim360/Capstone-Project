@@ -87,6 +87,6 @@ public class Article {
 
     //@KeywordField
     @FullTextField
-    @Column(name = "fullText", length=200000) // Use a different field/ length so this is not so big and wasteful
+    @Column(name = "fullText", columnDefinition = "TEXT") // Use a different field/ length so this is not so big and wasteful
     private String fullText;
 }
