@@ -48,6 +48,7 @@ public class ArticleController {
     }
     @DeleteMapping("/admin/{articleId}")
     public void deleteArticle(@PathVariable Long articleId){
+        log.info("Request for article deletion of ID : " + articleId);
         this.articleService.deleteArticle(articleId);
     }
     /*
