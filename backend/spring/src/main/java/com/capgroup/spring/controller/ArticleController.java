@@ -2,11 +2,13 @@ package com.capgroup.spring.controller;
 
 import com.capgroup.spring.model.Article;
 import com.capgroup.spring.model.ArticleDTO;
+import com.capgroup.spring.model.BooleanRequestDTO;
 import com.capgroup.spring.model.SearchRequestDTO;
 import com.capgroup.spring.service.ArticleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -62,5 +64,22 @@ public class ArticleController {
         log.info("Request for article search received with data : " + searchRequestDTO);
 
         return articleService.searchArticles(searchRequestDTO.getText(), searchRequestDTO.getFields(), searchRequestDTO.getLimit());
+    }
+
+
+    @GetMapping("/bool")
+    public List<Article> boolSearchArticles(BooleanRequestDTO booleanRequestDTO){
+        log.info("Request for boolean article search received with data: " + booleanRequestDTO);
+        ArrayList<List<String>> queries = new ArrayList<>(3);
+        queries.add(booleanRequestDTO.getQuery_one());
+        if(!booleanRequestDTO.getQuery_two().isEmpty()){
+            queries.add(booleanRequestDTO.getQuery_two());
+            if (!booleanRequestDTO.getQuery_three().isEmpty()){
+                queries.add(booleanRequestDTO.getQuery_three());
+            }
+        }
+        return articleService.boolSearchArticles(queries, booleanRequestDTO.getLimit());
+        //return articleService.boolSearchArticles(booleanRequestDTO.getText(), booleanRequestDTO.getBoolOps(),
+        //        booleanRequestDTO.getFields(), booleanRequestDTO.getLimit());
     }
 }
