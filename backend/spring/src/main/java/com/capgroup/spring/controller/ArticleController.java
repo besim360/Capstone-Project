@@ -1,12 +1,11 @@
 package com.capgroup.spring.controller;
 
-import com.capgroup.spring.model.Article;
-import com.capgroup.spring.model.ArticleDTO;
-import com.capgroup.spring.model.BooleanRequestDTO;
-import com.capgroup.spring.model.SearchRequestDTO;
+import com.capgroup.spring.model.*;
 import com.capgroup.spring.service.ArticleService;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +24,13 @@ public class ArticleController {
     }
 
     @PostMapping("/admin/addArticle") //look at how to integrate DTO here
-    public @ResponseBody String addArticle(ArticleDTO articleDTO){
-        articleService.addArticle(articleDTO.getTitle(), articleDTO.getAuthors(),
-                articleDTO.getSourceAbbrev(), articleDTO.getSourceLong(), articleDTO.getVolNum(),
-                articleDTO.getDate(), articleDTO.getStartYear(), articleDTO.getEndYear(), articleDTO.getPages(),
-                articleDTO.getSubjectCodes(), articleDTO.getDoi());
+    public @ResponseBody String addArticle(@NotNull @RequestParam("articleDTO") ArticleDTO articleDTO,
+                                           @RequestParam("file") MultipartFile file){
+        //check if file, then run through pdf parser
+        articleService.addArticle(articleDTO.title(), articleDTO.authors(),
+                articleDTO.sourceAbbrev(), articleDTO.sourceLong(), articleDTO.volNum(),
+                articleDTO.date(), articleDTO.startYear(), articleDTO.endYear(), articleDTO.pages(),
+                articleDTO.subjectCodes(), articleDTO.doi());
         return "Article added."; //return contents of article added and response status
     }
     /*public ResponseEntity<?> addArticle(HttpServletRequest request) { //role we are looking for is 'admin'
@@ -39,11 +40,14 @@ public class ArticleController {
         log.info("accessed addArticle!");
     }*/
     @PutMapping("/admin/updateArticle/{articleId}")
-    public @ResponseBody String updateArticle(@PathVariable Long articleId, ArticleDTO articleDTO){
-        articleService.updateArticle(articleId, articleDTO.getTitle(), articleDTO.getAuthors(),
-                articleDTO.getSourceAbbrev(), articleDTO.getSourceLong(), articleDTO.getVolNum(),
-                articleDTO.getDate(), articleDTO.getStartYear(), articleDTO.getEndYear(), articleDTO.getPages(),
-                articleDTO.getSubjectCodes(), articleDTO.getDoi());
+    public @ResponseBody String updateArticle(@NotNull @PathVariable Long articleId,
+                                              @RequestParam("articleDTO") ArticleDTO articleDTO,
+                                              @RequestParam("file") MultipartFile file){
+        //add check here
+        articleService.updateArticle(articleId, articleDTO.title(), articleDTO.authors(),
+                articleDTO.sourceAbbrev(), articleDTO.sourceLong(), articleDTO.volNum(),
+                articleDTO.date(), articleDTO.startYear(), articleDTO.endYear(), articleDTO.pages(),
+                articleDTO.subjectCodes(), articleDTO.doi());
         return "Article updated."; //return contents of article added and response status
     }
     @DeleteMapping("/admin/{articleId}")
@@ -59,7 +63,7 @@ public class ArticleController {
     3) API either returns 401 unauthorized (if keycloak returns unauthorized) OR API does the thing and returns its response
      */
     @GetMapping("/search")
-    public List<Article> searchArticles(SearchRequestDTO searchRequestDTO) {
+    public List<?> searchArticles(SearchRequestDTO searchRequestDTO) {
 
         log.info("Request for article search received with data : " + searchRequestDTO);
 

@@ -1,6 +1,7 @@
 package com.capgroup.spring.service;
 
 import com.capgroup.spring.model.Article;
+import com.capgroup.spring.model.ArticleDTO;
 import com.capgroup.spring.repository.ArticleRepository;
 import org.springframework.stereotype.Service;
 
@@ -13,7 +14,7 @@ import java.util.List;
  */
 @Service
 public class ArticleService {
-    private ArticleRepository articleRepository;
+    private final ArticleRepository articleRepository;
 
     private static final List<String> SEARCHABLE_FIELDS = Arrays.asList("title", "authors", "sourceLong", "topics", "doi", "sourceAbbrev", "fullText");
 
@@ -21,7 +22,7 @@ public class ArticleService {
         this.articleRepository = articleRepository;
     }
 
-    public List<Article> searchArticles(String text, List<String> fields, int limit) {
+    public List<?> searchArticles(String text, List<String> fields, int limit) {
 
         List<String> fieldsToSearchBy = fields.isEmpty() ? SEARCHABLE_FIELDS : fields;
 
@@ -35,7 +36,9 @@ public class ArticleService {
                 text, limit, fieldsToSearchBy.toArray(new String[0]));
     }
 
-    public void addArticle(String title, String authors, String sourceAbbrev, String sourceLong, String volNum, String date, Integer startYear, Integer endYear, String pages, String subjectCodes, String doi) { //can create article here, then save
+    public void addArticle(String title, String authors, String sourceAbbrev, String sourceLong, String volNum,
+                           String date, Integer startYear, Integer endYear, String pages,
+                           String subjectCodes, String doi) { //can create article here, then save
         Article article = new Article();
         if (title != null) {
             article.setTitle(title);
