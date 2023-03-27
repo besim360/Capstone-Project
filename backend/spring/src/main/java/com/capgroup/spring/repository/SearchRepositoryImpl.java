@@ -96,9 +96,9 @@ public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaR
         //b.setMinimumNumberShouldMatch(clauses);
         external.add(internal.build(), BooleanClause.Occur.MUST);
         BooleanQuery bq = external.build();
-        List hits =
+        List<T> hits =
                 searchSession
-                        .search(Article.class)
+                        .search(getDomainClass())
                         .extension(LuceneExtension.get())
                         .where(f -> f.fromLuceneQuery(bq))
                         .fetchHits(limit);
@@ -114,7 +114,8 @@ public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaR
      * @param queries the list of queries
      * @param limit the max number of hits to be returned
      * @return null
-     *
+     */
+    /*
     private List getBoolSearchResult(ArrayList<List<String>> queries, int limit){
 
         // might need to look into how boolean query is being built to make sure it is working properly
@@ -148,9 +149,9 @@ public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaR
         //b.setMinimumNumberShouldMatch(clauses);
         external.add(internal.build(), BooleanClause.Occur.MUST);
         BooleanQuery bq = external.build();
-        List hits =
+        List<T> hits =
                 searchSession
-                        .search(Article.class)
+                        .search(getDomainClass())
                         .extension(LuceneExtension.get())
                         .where(f -> f.fromLuceneQuery(bq))
                         .fetchHits(limit);
@@ -158,7 +159,7 @@ public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaR
         return hits;
     }
 
-
+    /*
     @Override
     public List boolSearchBy(List<String> text, List<String> boolOps, List<String> fields, int limit){
         return getBoolSearchResult(text, boolOps, fields, limit);

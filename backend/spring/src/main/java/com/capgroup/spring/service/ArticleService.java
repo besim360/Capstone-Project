@@ -1,19 +1,29 @@
 package com.capgroup.spring.service;
 
+import com.capgroup.pdfparser.PDFMain;
 import com.capgroup.spring.model.Article;
 import com.capgroup.spring.repository.ArticleRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+import lombok.extern.slf4j.Slf4j;
 
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 
 /**
  * The business layer that forwards the call to the searchBy function
  */
 @Service
+@Slf4j
 public class ArticleService {
-    private ArticleRepository articleRepository;
+    private final ArticleRepository articleRepository;
 
     private static final List<String> SEARCHABLE_FIELDS = Arrays.asList("title", "authors", "sourceLong", "topics", "doi", "sourceAbbrev", "fullText");
 
@@ -21,7 +31,7 @@ public class ArticleService {
         this.articleRepository = articleRepository;
     }
 
-    public List<Article> searchArticles(String text, List<String> fields, int limit) {
+    public List<?> searchArticles(String text, List<String> fields, int limit) {
 
         List<String> fieldsToSearchBy = fields.isEmpty() ? SEARCHABLE_FIELDS : fields;
 
@@ -35,7 +45,9 @@ public class ArticleService {
                 text, limit, fieldsToSearchBy.toArray(new String[0]));
     }
 
-    public void addArticle(String title, String authors, String sourceAbbrev, String sourceLong, String volNum, String date, Integer startYear, Integer endYear, String pages, String subjectCodes, String doi) { //can create article here, then save
+    public void addArticle(String title, String authors, String sourceAbbrev, String sourceLong, String volNum,
+                           String date, Integer startYear, Integer endYear, String pages,
+                           String subjectCodes, String topics, String doi, MultipartFile file) { //can create article here, then save
         Article article = new Article();
         if (title != null) {
             article.setTitle(title);
@@ -67,15 +79,37 @@ public class ArticleService {
         if (subjectCodes != null) {
             article.setSubjectCodes(subjectCodes);
         }
+        if (topics !=null) {
+            article.setTopics(topics);
+        }
         if (doi != null) {
             article.setDoi(doi);
         }
-
+        if (file != null) {
+            try {
+                InputStream tempFile = file.getInputStream();
+                String text = PDFMain.parseStream(tempFile);
+                System.out.println(text);
+                article.setFullText(text);
+            } catch (IOException e) {
+                log.info("Error parsing PDF: " + e.getMessage());
+            }
+        }
         articleRepository.save(article);
     }
 
-    public void updateArticle(Long id, String title, String authors, String sourceAbbrev, String sourceLong, String volNum, String date, Integer startYear, Integer endYear, String pages, String subjectCodes, String doi) {
-        Article article = articleRepository.getReferenceById(id);
+    @Transactional
+    public void updateArticle(Long id, String title, String authors, String sourceAbbrev,
+                              String sourceLong, String volNum, String date, Integer startYear, Integer endYear,
+                              String pages, String subjectCodes, String topics, String doi, MultipartFile file) {
+        Article article;
+        try {
+            article = articleRepository.getReferenceById(id);
+        }
+        catch (EntityNotFoundException e) {
+            log.info("Error updating article: " + e.getMessage());
+            return;
+        }
         if (title != null) {
             article.setTitle(title);
         }
@@ -106,8 +140,21 @@ public class ArticleService {
         if (subjectCodes != null) {
             article.setSubjectCodes(subjectCodes);
         }
+        if (topics != null) {
+            article.setTopics(topics);
+        }
         if (doi != null) {
             article.setDoi(doi);
+        }
+        if (file != null) {
+            try {
+                InputStream tempFile = file.getInputStream();
+                String text = PDFMain.parseStream(tempFile);
+                System.out.println(text);
+                article.setFullText(text);
+            } catch (IOException e) {
+                log.info("Error parsing PDF: " + e.getMessage());
+            }
         }
     }
 

@@ -1,6 +1,6 @@
 package com.capgroup.spring.index;
 
-import org.hibernate.Session;
+
 import org.hibernate.search.mapper.orm.Search;
 import org.hibernate.search.mapper.orm.massindexing.MassIndexer;
 import org.hibernate.search.mapper.orm.session.SearchSession;
@@ -15,9 +15,9 @@ import jakarta.persistence.EntityManager;
 @Transactional
 @Component
 public class Indexer {
-    private EntityManager entityManager;
+    private final EntityManager entityManager;
 
-    private static final int THREAD_NUMBER = 4;
+    private static final int THREAD_NUMBER = 4; //capped to 4 threads right now
 
     public Indexer(EntityManager entityManager) {
         this.entityManager = entityManager;

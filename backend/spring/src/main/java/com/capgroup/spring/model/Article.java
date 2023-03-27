@@ -1,14 +1,18 @@
 package com.capgroup.spring.model;
 
-import lombok.EqualsAndHashCode;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import jakarta.persistence.*;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordField;
+import org.hibernate.Hibernate;
+import org.hibernate.search.engine.backend.types.Projectable;
+import org.hibernate.search.engine.backend.types.Searchable;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+
+
+import java.util.Objects;
 
 
 /**
@@ -19,7 +23,6 @@ import org.hibernate.search.mapper.pojo.mapping.definition.annotation.KeywordFie
 @Getter
 @Setter
 @ToString
-@EqualsAndHashCode
 
 public class Article {
 
@@ -32,61 +35,75 @@ public class Article {
     public Article() {
     }
 
-    @Id
+    @Id()
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Long id;
 
-    @FullTextField
-    @Column(name = "title", columnDefinition = "VARCHAR(512)")
+    @FullTextField(projectable = Projectable.YES)
+    @Column(name = "title", columnDefinition = "VARCHAR(1024)")
     private String title;
 
-    @FullTextField
+    @FullTextField(projectable = Projectable.YES)
     @Column(name = "authors")
     private String authors;
 
-    @FullTextField
+    @FullTextField(projectable = Projectable.YES)
     @Column(name = "sourceAbbrev")
     private String sourceAbbrev;
 
-    @FullTextField
+    @FullTextField(projectable = Projectable.YES)
     @Column(name = "sourceLong")
     private String sourceLong;
 
-    @FullTextField
+    @FullTextField(projectable = Projectable.YES)
     @Column(name = "volNum")
     private String volNum;
 
-    @FullTextField
+    @FullTextField(projectable = Projectable.YES)
     @Column(name = "date")
     private String date;
 
-    @GenericField
+    @GenericField(projectable = Projectable.YES)
     @Column(name = "startYear")
     private int startYear;
 
-    @GenericField
+    @GenericField(projectable = Projectable.YES)
     @Column(name = "endYear")
     private int endYear;
 
-    @FullTextField
+    @FullTextField(searchable = Searchable.NO, projectable = Projectable.YES)
     @Column(name = "pages")
     private String pages;
 
-    @FullTextField
+    @FullTextField(projectable = Projectable.YES)
     @Column(name = "subjectCodes")
     private String subjectCodes;
 
-    @FullTextField
+    @FullTextField(analyzer = "standard", projectable = Projectable.YES)
     @Column(name = "topics", columnDefinition = "VARCHAR(2048)")
     private String topics;
 
-    @FullTextField
+    @FullTextField(projectable = Projectable.YES)
     @Column(name = "doi")
     private String doi;
 
-    //@KeywordField
-    @FullTextField
-    @Column(name = "fullText", columnDefinition = "TEXT") // Use a different field/ length so this is not so big and wasteful
+
+    @FullTextField(analyzer = "stop", projectable = Projectable.NO)
+    @Column(name = "fullText", columnDefinition = "TEXT")
     private String fullText;
+
+    //replaces @EqualsandHashcode with these overrides
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Article article = (Article) o;
+        return id != null && Objects.equals(id, article.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
+    }
 }

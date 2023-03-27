@@ -14,8 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+
 
 // http://localhost:9001/article/search?text=query&limit=5
 
@@ -28,8 +27,7 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 	}
 
-	/*
-
+/*
 	@Bean
 	public ApplicationRunner initializeData(ArticleRepository articleRepository) throws Exception {
 		return (ApplicationArguments args) -> {
@@ -49,7 +47,5 @@ public class Application {
 		};
 	}
 
-	 */
-
-
+ */
 }
