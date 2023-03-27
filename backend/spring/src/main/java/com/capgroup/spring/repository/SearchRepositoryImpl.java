@@ -1,8 +1,7 @@
 package com.capgroup.spring.repository;
 
-import com.capgroup.spring.model.Article;
+import com.capgroup.spring.model.ArticleProjection;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.TermQuery;
@@ -39,20 +38,51 @@ public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaR
         this.entityManager = entityManager;
     }
 
+
     @Override
     public List searchBy(String text, int limit, String... fields) {
-        SearchResult<T> result = getSearchResult(text, limit, fields);
+        SearchResult<ArticleProjection> result = getSearchResult(text, limit, fields);
 
         return result.hits();
     }
 
-    private SearchResult<T> getSearchResult(String text, int limit, String[] fields) {
+    private SearchResult<ArticleProjection> getSearchResult(String text, int limit, String[] fields) {
         SearchSession searchSession = Search.session(entityManager);
 
-        SearchResult<T> result =
+        SearchResult<ArticleProjection> result =
                 searchSession
                         .search(getDomainClass())
-                        .where(f -> f.match().fields(fields).matching(text).fuzzy(1))
+                        .select(f-> f.composite(
+                                list -> new ArticleProjection(
+                                        (Long) list.get(0),         //id
+                                        (String) list.get(1),       //title
+                                        (String) list.get(2),       //authors
+                                        (String) list.get(3),       //sourceAbbrev
+                                        (String) list.get(4),       //sourceLong
+                                        (String) list.get(5),       //volNum
+                                        (String) list.get(6),       //date
+                                        (Integer) list.get(7),      //startYear
+                                        (Integer) list.get(8),      //endYear
+                                        (String) list.get(9),       //pages
+                                        (String) list.get(10),      //subjectCodes
+                                        (String) list.get(11),      //topics
+                                        (String) list.get(12)       //doi
+                                ),
+                                f.id(Long.class),
+                                f.field("title", String.class),
+                                f.field("authors", String.class),
+                                f.field("sourceAbbrev", String.class),
+                                f.field("sourceLong", String.class),
+                                f.field("volNum", String.class),
+                                f.field("date", String.class),
+                                f.field("startYear", Integer.class),
+                                f.field("endYear", Integer.class),
+                                f.field("pages", String.class),
+                                f.field("subjectCodes", String.class),
+                                f.field("topics", String.class),
+                                f.field("doi", String.class)
+                        ))
+                        .where(f -> f.match().fields(fields).matching(text))
                         .fetch(limit);
         return result;
     }
@@ -70,7 +100,7 @@ public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaR
      * @param limit the max number of hits to be returned
      * @return null
      */
-    private List<Article> getBoolSearchResult(ArrayList<List<String>> queries, int limit){
+    private List<T> getBoolSearchResult(ArrayList<List<String>> queries, int limit){
 
         // might need to look into how boolean query is being built to make sure it is working properly
         SearchSession searchSession = Search.session(entityManager);
@@ -103,9 +133,9 @@ public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaR
         //b.setMinimumNumberShouldMatch(clauses);
         external.add(internal.build(), BooleanClause.Occur.MUST);
         BooleanQuery bq = external.build();
-        List<Article> hits =
+        List<T> hits =
                 searchSession
-                        .search(Article.class)
+                        .search(getDomainClass())
                         .extension(LuceneExtension.get())
                         .where(f -> f.fromLuceneQuery(bq))
                         .fetchHits(limit);

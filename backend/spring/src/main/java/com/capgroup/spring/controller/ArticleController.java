@@ -1,15 +1,15 @@
 package com.capgroup.spring.controller;
 
-import com.capgroup.spring.model.Article;
-import com.capgroup.spring.model.ArticleDTO;
-import com.capgroup.spring.model.BooleanRequestDTO;
-import com.capgroup.spring.model.SearchRequestDTO;
+import com.capgroup.spring.model.*;
 import com.capgroup.spring.service.ArticleService;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * REST API controller that receives HTTP requests from clients
@@ -25,11 +25,17 @@ public class ArticleController {
     }
 
     @PostMapping("/admin/addArticle") //look at how to integrate DTO here
-    public @ResponseBody String addArticle(ArticleDTO articleDTO){
-        articleService.addArticle(articleDTO.getTitle(), articleDTO.getAuthors(),
-                articleDTO.getSourceAbbrev(), articleDTO.getSourceLong(), articleDTO.getVolNum(),
-                articleDTO.getDate(), articleDTO.getStartYear(), articleDTO.getEndYear(), articleDTO.getPages(),
-                articleDTO.getSubjectCodes(), articleDTO.getDoi());
+    public @ResponseBody String addArticle(@RequestParam(value = "title", required = true) String title, @RequestParam(value = "authors", required = false) String authors,
+                                           @RequestParam(value = "sourceAbbrev", required = false) String sourceAbbrev, @RequestParam(value = "sourceLong", required = false) String sourceLong,
+                                           @RequestParam(value = "volNum", required = false) String volNum, @RequestParam(value = "date", required = false) String date,
+                                           @RequestParam(value = "startYear", required = false) Integer startYear, @RequestParam(value = "endYear", required = false) Integer endYear,
+                                           @RequestParam(value = "pages", required = false) String pages, @RequestParam(value = "subjectCodes", required = false) String subjectCodes,
+                                           @RequestParam(value = "topics", required = false) String topics, @RequestParam(value = "doi", required = false) String doi,
+                                           @RequestParam(value = "file", required = false) MultipartFile file){
+        articleService.addArticle(title, authors,
+                sourceAbbrev, sourceLong, volNum,
+                date, startYear, endYear, pages,
+                subjectCodes, topics, doi, file);
         return "Article added."; //return contents of article added and response status
     }
     /*public ResponseEntity<?> addArticle(HttpServletRequest request) { //role we are looking for is 'admin'
@@ -39,11 +45,19 @@ public class ArticleController {
         log.info("accessed addArticle!");
     }*/
     @PutMapping("/admin/updateArticle/{articleId}")
-    public @ResponseBody String updateArticle(@PathVariable Long articleId, ArticleDTO articleDTO){
-        articleService.updateArticle(articleId, articleDTO.getTitle(), articleDTO.getAuthors(),
-                articleDTO.getSourceAbbrev(), articleDTO.getSourceLong(), articleDTO.getVolNum(),
-                articleDTO.getDate(), articleDTO.getStartYear(), articleDTO.getEndYear(), articleDTO.getPages(),
-                articleDTO.getSubjectCodes(), articleDTO.getDoi());
+    public @ResponseBody String updateArticle(@NotNull @PathVariable Long articleId,
+                                              @RequestParam(value = "title", required = true) String title, @RequestParam(value = "authors", required = false) String authors,
+                                              @RequestParam(value = "sourceAbbrev", required = false) String sourceAbbrev, @RequestParam(value = "sourceLong", required = false) String sourceLong,
+                                              @RequestParam(value = "volNum", required = false) String volNum, @RequestParam(value = "date", required = false) String date,
+                                              @RequestParam(value = "startYear", required = false) Integer startYear, @RequestParam(value = "endYear", required = false) Integer endYear,
+                                              @RequestParam(value = "pages", required = false) String pages, @RequestParam(value = "subjectCodes", required = false) String subjectCodes,
+                                              @RequestParam(value = "topics", required = false) String topics, @RequestParam(value = "doi", required = false) String doi,
+                                              @RequestParam(value = "file", required = false) MultipartFile file){
+
+        articleService.updateArticle(articleId, title, authors,
+                sourceAbbrev, sourceLong, volNum,
+                date, startYear, endYear, pages,
+                subjectCodes,topics, doi, file);
         return "Article updated."; //return contents of article added and response status
     }
     @DeleteMapping("/admin/{articleId}")
@@ -59,7 +73,7 @@ public class ArticleController {
     3) API either returns 401 unauthorized (if keycloak returns unauthorized) OR API does the thing and returns its response
      */
     @GetMapping("/search")
-    public List<Article> searchArticles(SearchRequestDTO searchRequestDTO) {
+    public List<?> searchArticles(SearchRequestDTO searchRequestDTO) {
 
         log.info("Request for article search received with data : " + searchRequestDTO);
 
