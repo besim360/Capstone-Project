@@ -28,7 +28,8 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 	}
 
-/*
+	/*
+
 	@Bean
 	public ApplicationRunner initializeData(ArticleRepository articleRepository) throws Exception {
 		return (ApplicationArguments args) -> {
@@ -48,5 +49,7 @@ public class Application {
 		};
 	}
 
- */
+	 */
+
+
 }

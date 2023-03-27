@@ -20,6 +20,10 @@ public class BooleanRequestDTO {
     private List<String> query_one = new ArrayList<>();
     private List<String> query_two = new ArrayList<>();
     private List<String> query_three = new ArrayList<>();
+    private List<String> query_four = new ArrayList<>();
+    private List<String> query_five = new ArrayList<>();
+    private List<String> query_six = new ArrayList<>();
+    private List<String> query_seven = new ArrayList<>();
 
     /*
     @NotBlank
