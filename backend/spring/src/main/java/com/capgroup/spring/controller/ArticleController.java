@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.List;
 
+
 /**
  * REST API controller that receives HTTP requests from clients
  */
@@ -24,13 +25,17 @@ public class ArticleController {
     }
 
     @PostMapping("/admin/addArticle") //look at how to integrate DTO here
-    public @ResponseBody String addArticle(@NotNull @RequestParam("articleDTO") ArticleDTO articleDTO,
-                                           @RequestParam("file") MultipartFile file){
-        //check if file, then run through pdf parser
-        articleService.addArticle(articleDTO.title(), articleDTO.authors(),
-                articleDTO.sourceAbbrev(), articleDTO.sourceLong(), articleDTO.volNum(),
-                articleDTO.date(), articleDTO.startYear(), articleDTO.endYear(), articleDTO.pages(),
-                articleDTO.subjectCodes(), articleDTO.doi());
+    public @ResponseBody String addArticle(@RequestParam(value = "title", required = true) String title, @RequestParam(value = "authors", required = false) String authors,
+                                           @RequestParam(value = "sourceAbbrev", required = false) String sourceAbbrev, @RequestParam(value = "sourceLong", required = false) String sourceLong,
+                                           @RequestParam(value = "volNum", required = false) String volNum, @RequestParam(value = "date", required = false) String date,
+                                           @RequestParam(value = "startYear", required = false) Integer startYear, @RequestParam(value = "endYear", required = false) Integer endYear,
+                                           @RequestParam(value = "pages", required = false) String pages, @RequestParam(value = "subjectCodes", required = false) String subjectCodes,
+                                           @RequestParam(value = "topics", required = false) String topics, @RequestParam(value = "doi", required = false) String doi,
+                                           @RequestParam(value = "file", required = false) MultipartFile file){
+        articleService.addArticle(title, authors,
+                sourceAbbrev, sourceLong, volNum,
+                date, startYear, endYear, pages,
+                subjectCodes, topics, doi, file);
         return "Article added."; //return contents of article added and response status
     }
     /*public ResponseEntity<?> addArticle(HttpServletRequest request) { //role we are looking for is 'admin'
@@ -41,13 +46,18 @@ public class ArticleController {
     }*/
     @PutMapping("/admin/updateArticle/{articleId}")
     public @ResponseBody String updateArticle(@NotNull @PathVariable Long articleId,
-                                              @RequestParam("articleDTO") ArticleDTO articleDTO,
-                                              @RequestParam("file") MultipartFile file){
-        //add check here
-        articleService.updateArticle(articleId, articleDTO.title(), articleDTO.authors(),
-                articleDTO.sourceAbbrev(), articleDTO.sourceLong(), articleDTO.volNum(),
-                articleDTO.date(), articleDTO.startYear(), articleDTO.endYear(), articleDTO.pages(),
-                articleDTO.subjectCodes(), articleDTO.doi());
+                                              @RequestParam(value = "title", required = true) String title, @RequestParam(value = "authors", required = false) String authors,
+                                              @RequestParam(value = "sourceAbbrev", required = false) String sourceAbbrev, @RequestParam(value = "sourceLong", required = false) String sourceLong,
+                                              @RequestParam(value = "volNum", required = false) String volNum, @RequestParam(value = "date", required = false) String date,
+                                              @RequestParam(value = "startYear", required = false) Integer startYear, @RequestParam(value = "endYear", required = false) Integer endYear,
+                                              @RequestParam(value = "pages", required = false) String pages, @RequestParam(value = "subjectCodes", required = false) String subjectCodes,
+                                              @RequestParam(value = "topics", required = false) String topics, @RequestParam(value = "doi", required = false) String doi,
+                                              @RequestParam(value = "file", required = false) MultipartFile file){
+
+        articleService.updateArticle(articleId, title, authors,
+                sourceAbbrev, sourceLong, volNum,
+                date, startYear, endYear, pages,
+                subjectCodes,topics, doi, file);
         return "Article updated."; //return contents of article added and response status
     }
     @DeleteMapping("/admin/{articleId}")

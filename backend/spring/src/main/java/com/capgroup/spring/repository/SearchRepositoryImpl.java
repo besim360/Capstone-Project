@@ -38,6 +38,7 @@ public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaR
         this.entityManager = entityManager;
     }
 
+
     @Override
     public List searchBy(String text, int limit, String... fields) {
         SearchResult<ArticleProjection> result = getSearchResult(text, limit, fields);
