@@ -22,9 +22,79 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="openDrawer" side="left" overlay bordered persistent>
-      drawer content
+     <q-drawer v-model="openDrawer" side="left" overlay bordered persistent class="bl-30">    <!--    #Fix color later -->
+
+      <q-item class="bg-primary q-pa-xs">                                       <!--  Bookmarks -->
+        <q-item-section avatar>
+          <q-icon color="white" name="bookmark" />
+        </q-item-section>
+
+        <q-item-section class="text-white text-subtitle1"> Bookmarks </q-item-section>
+      </q-item>
+
+
+      <div class="row" v-for="n in 1" :key="n" style="justify-content: center;">
+
+      <div style="max-width: 370px;  max-height: 350px;">
+        <q-list>
+          <q-expansion-item
+            class="text-subtitle2 text-black"
+            expand-separator
+            icon="folder"
+            label="Business and management"
+          >
+            <q-card>
+
+                <div class="row" v-for="n in 2" :key="n" style="justify-content: center;">
+                  <q-item class="">
+
+                    <q-icon color="black" name="folder" class="q-pa-sm"/>
+                    <q-item-section avatar class="text-blue text-subtitle2"> The Case for "Living" Models </q-item-section>
+
+                  </q-item>
+                </div>
+
+            </q-card>
+          </q-expansion-item>
+
+
+          <q-expansion-item
+            class="text-subtitle2 text-black"
+            expand-separator
+            icon="folder"
+            label="Technology"
+          >
+          </q-expansion-item>
+        </q-list>
+      </div>
+    </div>
+
+    <q-item class="bg-secondary" style="justify-content: center;">        <!--  Add New Folder -->
+      <q-btn color="accent" label="Add Folder" />
+    </q-item>
+
+    <q-item class="bg-primary q-pa-xs">                                  <!--  Recent Searches -->
+        <q-item-section avatar>
+          <q-icon color="white" name="history" />
+        </q-item-section>
+        <q-item-section class="text-white text-subtitle1"> Recent Searches </q-item-section>
+    </q-item>
+
+    <div class="row" v-for="n in 1" :key="n" style="justify-content: center;">
+      <q-item>
+        <q-icon color="black" name="saved_search" class="q-pa-sm"/>
+        <q-item-section avatar class="text-blue text-subtitle2"> The Case for "Living" Models </q-item-section>
+      </q-item>
+
+    </div>
+
+
+
+
     </q-drawer>
+
+
+
 
     <q-page-container>
       <router-view />
