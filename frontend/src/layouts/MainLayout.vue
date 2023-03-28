@@ -36,7 +36,7 @@
       <div class="row" v-for="n in 1" :key="n" style="justify-content: center;">
 
       <div style="max-width: 370px;  max-height: 350px;">
-        <q-list bordered class="borders">
+        <q-list>
           <q-expansion-item
             class="text-subtitle2 text-black"
             expand-separator
@@ -77,13 +77,13 @@
         <q-item-section avatar>
           <q-icon color="white" name="history" />
         </q-item-section>
-
         <q-item-section class="text-white text-subtitle1"> Recent Searches </q-item-section>
     </q-item>
 
     <div class="row" v-for="n in 1" :key="n" style="justify-content: center;">
       <q-item>
-
+        <q-icon color="black" name="saved_search" class="q-pa-sm"/>
+        <q-item-section avatar class="text-blue text-subtitle2"> The Case for "Living" Models </q-item-section>
       </q-item>
 
     </div>
