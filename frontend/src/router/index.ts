@@ -32,5 +32,14 @@ export default route(function (/* { store, ssrContext } */) {
     history: createHistory(process.env.VUE_ROUTER_BASE),
   });
 
+  Router.beforeEach((to, from, next) => {
+    if (to.meta.isAuthenticated) {
+      // Get the actual app url
+      const basePath = window.location.toString()
+
+      if (!app.config.globalProperties.$keycloak)
+    }
+  })
+
   return Router;
 });

@@ -20,19 +20,12 @@ async function attachToken(config: AxiosRequestConfig) {
   }
 }
 
-// Be careful when using SSR for cross-request state pollution
-// due to creating a Singleton instance here;
-// If any client changes this (global) instance, it might be a
-// good idea to move this instance creation inside of the
-// "export default () => {}" function below (which runs individually
-// for each client)
-const UserApi = axios.create({ baseURL: 'https://api.example.com' });
-UserApi.interceptors.request.use(attachToken)
-
-const SearchApi = axios.create({ baseURL: 'https://api.example.com' });
-SearchApi.interceptors.request.use(attachToken)
-
 export default boot(({ app }) => {
+  const UserApi = axios.create({ baseURL: 'http://localhost:8000' });
+  UserApi.interceptors.request.use(attachToken)
+
+  const SearchApi = axios.create({ baseURL: 'http://localhost:9001' });
+  SearchApi.interceptors.request.use(attachToken)
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
   app.config.globalProperties.$axios = axios;
@@ -45,4 +38,3 @@ export default boot(({ app }) => {
   app.config.globalProperties.$searchapi = SearchApi;
 });
 
-export { UserApi };
