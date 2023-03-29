@@ -32,8 +32,8 @@ public class Application {
 	public ApplicationRunner initializeData(ArticleRepository articleRepository) throws Exception {
 		return (ApplicationArguments args) -> {
 
-			ArrayList<Article> articles = DataInput.enterData("backend/excelfiles/MainForm.xlsx",
-					"backend/excelfiles/Sources.xlsx", "backend/excelfiles/Subjects.xlsx", "backend/pdfs/");
+			ArrayList<Article> articles = DataInput.enterData("excelfiles/MainForm.xlsx",
+					"excelfiles/Sources.xlsx", "excelfiles/Subjects.xlsx", "pdfs/");
 			articleRepository.saveAllAndFlush(articles);
 
 		};
