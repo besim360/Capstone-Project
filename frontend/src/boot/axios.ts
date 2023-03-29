@@ -1,5 +1,6 @@
 import { boot } from 'quasar/wrappers';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import AuthService from 'src/auth/AuthService';
 
 declare module '@vue/runtime-core' {
   interface ComponentCustomProperties {
@@ -8,7 +9,7 @@ declare module '@vue/runtime-core' {
 }
 
 async function attachToken(config: AxiosRequestConfig) {
-  const token = await updateToken();
+  const token = await AuthService.AuthWrapper.GetAuthToken();
   return {
     ...config,
     headers: {

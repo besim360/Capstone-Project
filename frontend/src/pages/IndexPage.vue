@@ -6,13 +6,13 @@
           <h3>Welcome!</h3>
         </div>
         <div class="col-6 center-col">
-          <router-link
+          <!-- <router-link
             :to=""
             custom
             v-slot:default="props"
           >
             <q-btn v-bind="buttonProps(props)"></q-btn>
-          </router-link>
+          </router-link> -->
         </div>
         <div class="col-6 center-col">
           <q-btn label="Search as Guest" class="bg-secondary" text-color="white" size="lg" @click="guestSearchHandler"></q-btn>

@@ -13,11 +13,11 @@
         <q-space />
         <q-tabs shrink indicator-color="primary">
           <q-route-tab to="/search" label="Search" exact/>
-          <q-route-tab to="/bibliography" label="Bibliography" exact/>
-          <q-route-tab to="/upload" label="Upload" exact v-if="loggedIn && isAdmin"/>
+          <q-route-tab to="/bibliography" label="Bibliography" exact  v-if="userStore.loggedIn"/>
+          <q-route-tab to="/upload" label="Upload" exact v-if="userStore.loggedIn && isAdmin"/>
           <q-route-tab to="/results" label="Results" exact/>
         </q-tabs>
-        <q-btn v-if="loggedIn" @click="logoutHandler" flat>Logout</q-btn>
+        <q-btn v-if="userStore.loggedIn" @click="logoutHandler" flat>Logout</q-btn>
         <q-btn v-else @click="loginHandler" flat>Sign In</q-btn>
       </q-toolbar>
     </q-header>
@@ -104,35 +104,32 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router';
-const route = useRoute();
-const router = useRouter()
+import AuthService from 'src/auth/AuthService';
+import useUserStore from 'src/auth/userStore';
+import { computed } from 'vue'
+import { useRouter } from 'vue-router';
+
+const router = useRouter();
+const userStore = useUserStore();
 const openDrawer = computed(() => {
-  return loggedIn.value && !route.matched.some(({ name }) => name === 'home')
+  const isHome = router.currentRoute.value.name === 'home';
+  return userStore.loggedIn && !isHome;
 })
-const loggedIn = ref(false);
-const isAdmin = ref(false);
-const loginHandler = () => {
-  loggedIn.value = true;
-  isAdmin.value = checkIsAdmin('in');
+
+const isAdmin = computed(() => {
+  return AuthService.AuthWrapper.HasRole('RealmAdmin');
+})
+
+const loginHandler = async () => {
+  await AuthService.AuthWrapper.Login('/');
   router.push('/search')
 }
-const logoutHandler = () => {
-  loggedIn.value = false;
-  isAdmin.value = checkIsAdmin('out');
+const logoutHandler = async () => {
+  await AuthService.AuthWrapper.Logout();
   router.push('/')
 }
 const goHome = () => {
   router.push('/')
-}
-
-const checkIsAdmin = (lType: string) => {
-  if(lType==='in'){
-    return true;
-  } else {
-    return false;
-  };
 }
 </script>
 

@@ -2,6 +2,7 @@ import { route } from 'quasar/wrappers';
 import {
   createMemoryHistory,
   createRouter,
+  Router as vueRouter,
   createWebHashHistory,
   createWebHistory,
 } from 'vue-router';
@@ -17,12 +18,14 @@ import routes from './routes';
  * with the Router instance.
  */
 
+export let Router = {} as vueRouter;
+
 export default route(function (/* { store, ssrContext } */) {
   const createHistory = process.env.SERVER
     ? createMemoryHistory
     : (process.env.VUE_ROUTER_MODE === 'history' ? createWebHistory : createWebHashHistory);
 
-  const Router = createRouter({
+  Router = createRouter({
     scrollBehavior: () => ({ left: 0, top: 0 }),
     routes,
 
@@ -30,16 +33,9 @@ export default route(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE),
+
+
   });
-
-  Router.beforeEach((to, from, next) => {
-    if (to.meta.isAuthenticated) {
-      // Get the actual app url
-      const basePath = window.location.toString()
-
-      if (!app.config.globalProperties.$keycloak)
-    }
-  })
 
   return Router;
 });
