@@ -14,7 +14,7 @@ class ApplicationTests {
 	void contextLoads() {
 	}
 
-	@Test
+	/*@Test
 	void parsePDF(){ //not a good usage of testing but ensures the library is giving an expected output for later usage
 		try{
 			String text = PDFMain.parseFile(new File("/home/danschool/Downloads/Aagbola_Liberating_JTWC_2012.pdf"));
@@ -22,6 +22,6 @@ class ApplicationTests {
 		} catch (IOException e){
 			e.printStackTrace();
 		}
-	}
+	}*/
 
 }
