@@ -5,31 +5,44 @@ const routes: RouteRecordRaw[] = [
     path: '/',
     name: 'home',
     component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/IndexPage.vue') }],
-  },
-  {
-    path: '/search',
-    name: 'search',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/SearchPage.vue')}]
-  },
-  {
-    path: '/results',
-    name: 'results',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/ResultsPage.vue')}]
-  },
-  {
-    path: '/upload',
-    name: 'upload',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/UploadPage.vue')}]
-  },
-  {
-    path: '/bibliography',
-    name: 'bibliogrpahy',
-    component: () => import('layouts/MainLayout.vue'),
-    children: [{ path: '', component: () => import('pages/BibliographyPage.vue')}]
+
+    meta: {
+      anonymous: true
+    },
+
+    children: [
+      {
+        path: '',
+        name: 'index',
+        component: () => import('pages/IndexPage.vue'),
+        meta: { anonymous: true }
+      },
+      {
+        path: '/search',
+        name: 'search',
+        component: () => import('pages/SearchPage.vue'),
+        meta: { anonymous: true }
+      },
+      {
+        path: '/results',
+        name: 'results',
+        component: () => import('pages/ResultsPage.vue'),
+        meta: { anonymous: true }
+      },
+      {
+        path: '/upload',
+        name: 'upload',
+        component: () => import('pages/UploadPage.vue'),
+        meta: { anonymous: false, role: 'RealmAdmin' }
+      },
+      {
+        path: '/bibliography',
+        name: 'bibliogrpahy',
+        component: () => import('pages/BibliographyPage.vue'),
+        meta: { anonymous: false }
+      },
+
+    ],
   },
 
   // Always leave this as last one,
@@ -37,6 +50,9 @@ const routes: RouteRecordRaw[] = [
   {
     path: '/:catchAll(.*)*',
     name: 'error',
+    meta: {
+      anonymous: true
+    },
     component: () => import('pages/ErrorNotFound.vue'),
   },
 ];

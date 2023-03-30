@@ -1,8 +1,10 @@
 <template>
-  <q-btn :label="props.label" @click="dialogDisplayHandler" label-color="primary" color="secondary"></q-btn>
-  <q-dialog v-model="store.active" persistent transition-show="scale" transition-hide="scale">
+  <q-btn v-if="props.type === 'AdvancedSearch'" :label="props.label" @click="dialogDisplayHandler" label-color="primary" color="secondary"></q-btn>
+  <q-btn v-else-if="props.type === 'AddFolder'" :label="props.label" @click="dialogDisplayHandler" color="accent"></q-btn>
+  <q-icon v-else clickable name="bookmark_add" @click="dialogDisplayHandler"/>
+  <q-dialog v-model="store.activeSearchForm" persistent transition-show="scale" transition-hide="scale" v-if="props.type === 'AdvancedSearch'">
     <q-card class="form-width" dark>
-      <q-card-section v-if="store.activeFType === 'AdvancedSearch'" class="bg-secondary advanced-search-form">
+      <q-card-section class="bg-secondary advanced-search-form">
         <div class="row">
           <div class="col-6">
             <h5 class="q-ma-sm">Advanced Search</h5>
@@ -12,7 +14,7 @@
           </div>
         </div>
         <q-form >
-          <div class="row" :key="line" v-for="line  in queryLine">
+          <div class="row" :key="index" v-for="(line, index) in queryLine">
             <div class="col-3" v-if="line.logic !='NA'" style="padding: 10px">
               <q-select outlined dark label-color="white" v-model="line.logic" :options="selectionOptions"></q-select>
             </div>
@@ -33,11 +35,49 @@
           </div>
         </q-form>
       </q-card-section>
-      <q-card-section v-else-if="store.activeFType === 'AddFolder'">
-        {{store.fAddFolderOptions.folderName}}
+      <q-card-actions class="bg-secondary" style="justify-content: center; padding-right: 25px; padding-bottom: 20px; padding-left: 25px;">
+        <q-btn :label="dialogCloseLabel" class="bg-white full-width" text-color="accent" @click="dialogSearchHandler"/>
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+  <q-dialog v-model="store.activeBookmark" persistent transition-show="scale" transition-hide="scale" v-else-if="props.type === 'AddBookmark'">
+    <q-card class="form-width" dark>
+      <q-card-section class="bg-secondary">
+        <div class="row">
+          <div class="col-6">
+            <h5 class="q-ma-sm">Add Bookmark</h5>
+          </div>
+          <div class="col-6" style="justify-content: end; display: flex">
+            <q-btn flat round icon="close" @click="dialogCloseHandler"></q-btn>
+          </div>
+        </div>
+        <q-form >
+          <div class="row">
+            <div class="col-12" style="padding: 10px">
+              <q-input outlined dark label-color="white" v-model="fAddBookmarkOptions.folderName" label="Bookmark Folder"></q-input>
+            </div>
+            <div class="col-12" style="padding: 10px">
+              <q-input outlined dark label-color="white" v-model="fAddBookmarkOptions.bookmarkName" label="Bookmark Name"></q-input>
+            </div>
+          </div>
+        </q-form>
       </q-card-section>
-      <q-card-section v-else-if="store.activeFType === 'AddBookmark'">
-        {{store.fAddBookmarkOptions.folderName}}
+      <q-card-actions class="bg-secondary" style="justify-content: center; padding-right: 25px; padding-bottom: 20px; padding-left: 25px;">
+        <q-btn :label="dialogCloseLabel" class="bg-white full-width" text-color="accent" @click="dialogSearchHandler"/>
+      </q-card-actions>
+    </q-card>
+  </q-dialog>
+  <q-dialog v-model="store.activeFolder" persistent transition-show="scale" transition-hide="scale" v-else-if="props.type === 'AddFolder'">
+    <q-card class="form-width" dark>
+      <q-card-section class="bg-secondary">
+        <div class="row">
+          <div class="col-6">
+            <h5 class="q-ma-sm">Add Bookmark Folder</h5>
+          </div>
+          <div class="col-6" style="justify-content: end; display: flex">
+            <q-btn flat round icon="close" @click="dialogCloseHandler"></q-btn>
+          </div>
+        </div>
       </q-card-section>
       <q-card-actions class="bg-secondary" style="justify-content: center; padding-right: 25px; padding-bottom: 20px; padding-left: 25px;">
         <q-btn :label="dialogCloseLabel" class="bg-white full-width" text-color="accent" @click="dialogSearchHandler"/>
@@ -51,17 +91,19 @@ import { useDialogStore } from 'src/stores/dialog-forms';
 import { useSearchStore } from 'src/stores/search';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
+import { SearchRecord } from 'src/api/models/search';
 
 const props = defineProps<{
   type: string
   label: string
+  value: SearchRecord
 }>()
 
 const store = useDialogStore();
 const searchStore = useSearchStore();
 const router = useRouter();
 const { queryLine } = storeToRefs(searchStore)
-
+const { fAddBookmarkOptions } = storeToRefs(store);
 const selectionOptions = [
   'AND',
   'OR',
@@ -74,7 +116,14 @@ const categoryOptions = [
 
 const dialogDisplayHandler = () => {
   loadFormType(props.type);
-  store.showForm();
+  if(props.type === 'AdvancedSearch'){
+    store.showSearchForm();
+  } else if (props.type === 'AddBookmark'){
+    store.showBookmarkForm();
+  } else if (props.type === 'AddFolder'){
+    store.showFolderForm();
+  }
+
 }
 
 const addSearchField = () => {
@@ -91,6 +140,16 @@ const loadFormType = (type: string) => {
     case 'AdvancedSearch': {
       store.clearAdvancedSearchForm();
       store.loadAdvancedSearch();
+      break;
+    }
+    case 'AddBookmark': {
+      store.clearAddBookmarkForm();
+      store.loadAddBookmark();
+      if(props.value &&  typeof props.value !== 'string'){
+        store.setBookmark(props.value);
+      }
+
+      break;
     }
   }
 };
@@ -110,16 +169,29 @@ const dialogCloseLabel = computed(() => {
 const dialogCloseHandler = () => {
   if (props.type === 'AdvancedSearch'){
     store.clearAdvancedSearchForm();
+    searchStore.resetQuery();
+    store.removeSearchForm();
+  } else if (props.type === 'AddBookmark'){
+    store.clearAddBookmarkForm();
+    store.removeBookmarkForm();
+  } else if (props.type === 'AddFolder'){
+    store.clearAddFolderForm();
+    store.removeFolderForm();
   }
-  store.removeForm();
-  searchStore.resetQuery();
+
 }
 
 const dialogSearchHandler = () => {
   if (props.type === 'AdvancedSearch'){
     store.clearAdvancedSearchForm();
+    store.removeSearchForm();
+  } else if (props.type === 'AddBookmark'){
+    store.clearAddBookmarkForm();
+    store.removeBookmarkForm();
+  } else if (props.type === 'AddFolder'){
+    store.clearAddFolderForm();
+    store.removeFolderForm();
   }
-  store.removeForm();
   router.push('/results');
   searchStore.clearQuery();
 }

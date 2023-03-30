@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { SearchRecord } from 'src/api/models/search';
 export interface Author {
   id: number;
   firstName: string;
@@ -21,6 +22,7 @@ export interface AddFolderForm {
 export interface AddBookmarkForm {
   folderName: string,
   bookmarkName: string,
+  record: SearchRecord,
 }
 
 export interface dialogFormMeta {
@@ -32,7 +34,9 @@ export interface dialogFormMeta {
 
 export const useDialogStore = defineStore('dialog', {
   state: () => ({
-    active: false,
+    activeBookmark: false,
+    activeSearchForm: false,
+    activeFolder: false,
     activeFType: '' as dialogFormMeta['formType'],
     fAdvSearchOptions: {} as dialogFormMeta['AdvancedSearch'],
     fAddFolderOptions: {} as dialogFormMeta['AddFolder'],
@@ -40,11 +44,44 @@ export const useDialogStore = defineStore('dialog', {
   }),
   getters: {},
   actions: {
-    showForm() {
-      this.active = true;
+    showBookmarkForm() {
+      this.removeSearchForm();
+      this.removeFolderForm();
+      this.activeBookmark = true;
+
     },
-    removeForm() {
-      this.active = false;
+    removeBookmarkForm() {
+      this.activeBookmark = false;
+    },
+    showSearchForm() {
+      this.removeBookmarkForm();
+      this.removeFolderForm();
+      this.activeSearchForm = true;
+    },
+    removeSearchForm() {
+      this.activeSearchForm = false;
+    },
+    showFolderForm() {
+      this.removeBookmarkForm();
+      this.removeSearchForm();
+      this.activeFolder = true;
+    },
+    removeFolderForm() {
+      this.activeFolder = false;
+    },
+    loadAddBookmark() {
+      this.activeFType = 'AddBookmark'
+      this.fAddBookmarkOptions = {
+        folderName: '',
+        bookmarkName: '',
+        record: {} as SearchRecord
+      } as dialogFormMeta['AddBookmark']
+    },
+    loadAddFolder() {
+      this.activeFType = 'AddFolder'
+      this.fAddFolderOptions = {
+        folderName: '',
+      } as dialogFormMeta['AddFolder']
     },
     loadAdvancedSearch() {
       this.activeFType = 'AdvancedSearch'
@@ -79,9 +116,26 @@ export const useDialogStore = defineStore('dialog', {
     updateAdvancedSearchForm(formInp: dialogFormMeta['AdvancedSearch']){
       this.fAdvSearchOptions = formInp;
     },
-    clearAdvancedSearchForm() {
-      this.fAdvSearchOptions = {} as dialogFormMeta['AdvancedSearch'];
-    }
 
+    setBookmark(record: SearchRecord) {
+      this.fAddBookmarkOptions.record = record;
+      this.fAddBookmarkOptions.bookmarkName = record.title;
+    },
+
+    clearAdvancedSearchForm() {
+      this.clearForm();
+      this.fAdvSearchOptions = {} as dialogFormMeta['AdvancedSearch'];
+    },
+    clearAddBookmarkForm() {
+      this.clearForm();
+      this.fAddBookmarkOptions = {} as dialogFormMeta['AddBookmark'];
+    },
+    clearAddFolderForm() {
+      this.clearForm();
+      this.fAddFolderOptions = {} as dialogFormMeta['AddFolder'];
+    },
+    clearForm() {
+      this.activeFType = '' as dialogFormMeta['formType']
+    }
   },
 });
