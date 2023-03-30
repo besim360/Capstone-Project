@@ -5,11 +5,11 @@ import uvicorn
 import jwt
 
 app = FastAPI()
-
+realm = "wsutcsr"
 #Authenticate the user with username and password, and receive their bearer token.
 @app.post("/authenticate-user/")
 def authenticateUser (email : str, password : str):
-    request = httpx.post("http://localhost:8080/realms/cs420/protocol/openid-connect/token", 
+    request = httpx.post(f"http://localhost:8080/realms/{realm}/protocol/openid-connect/token", 
     data={'username' : email, 
         'password' : password, 
         'grant_type' : 'password', 
@@ -52,7 +52,7 @@ def setUserPassword(email : str, newPassword : str, request : Request):
     token = request.headers.get('Authorization')
     userObject = retrieveUser(email, token)
     userid = userObject[1][0]["id"]
-    request = httpx.put("http://localhost:8080/admin/realms/cs420/users/"+userid+"/reset-password",
+    request = httpx.put(f"http://localhost:8080/admin/realms/{realm}/users/{userid}/reset-password",
     headers={'Authorization': 'Bearer ' + token},
     json={"value":newPassword})
     return request.status_code
@@ -83,7 +83,7 @@ def deleteUser(email : str, request : Request):
     token = request.headers.get('Authorization')
     userObject = retrieveUser(email, token)
     userid = userObject[1][0]["id"]
-    request = httpx.delete("http://localhost:8080/admin/realms/cs420/users/"+userid,
+    request = httpx.delete(f"http://localhost:8080/admin/realms/{realm}/users/{userid}",
     headers={'Authorization': 'Bearer ' + token})
     return request.status_code
     
@@ -94,7 +94,7 @@ def promoteUser(email : str, request : Request):
     token = request.headers.get('Authorization')
     userObject = retrieveUser(email, token)
     userid = userObject[1][0]["id"]
-    request = httpx.put("http://localhost:8080/admin/realms/cs420/users/"+userid+"/groups/1261360f-6256-4ca2-bbc2-a1f07ceef150",
+    request = httpx.put(f"http://localhost:8080/admin/realms/{realm}/users/{userid}/groups/1261360f-6256-4ca2-bbc2-a1f07ceef150",
     headers={'Authorization': 'Bearer ' + token})
     return request.status_code
 
@@ -105,7 +105,7 @@ def demoteUser(email : str, request : Request):
     token = request.headers.get('Authorization')
     userObject = retrieveUser(email, token)
     userid = userObject[1][0]["id"]
-    request = httpx.delete("http://localhost:8080/admin/realms/cs420/users/"+userid+"/groups/1261360f-6256-4ca2-bbc2-a1f07ceef150",
+    request = httpx.delete(f"http://localhost:8080/admin/realms/{realm}/users/{userid}/groups/1261360f-6256-4ca2-bbc2-a1f07ceef150",
     headers={'Authorization': 'Bearer ' + token})
     return request.status_code
 
@@ -116,7 +116,7 @@ def changeStatus(email : str, request : Request, status : bool):
     token = request.headers.get('Authorization')
     userObject = retrieveUser(email, token)
     userid = userObject[1][0]["id"]
-    request = httpx.put("http://localhost:8080/admin/realms/cs420/users/"+userid,
+    request = httpx.put(f"http://localhost:8080/admin/realms/{realm}/users/{userid}",
     headers={'Authorization': 'Bearer ' + token}, json={"enabled":status})
     return request.status_code
 

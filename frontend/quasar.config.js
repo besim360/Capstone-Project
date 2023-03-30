@@ -30,7 +30,8 @@ module.exports = configure(function (/* ctx */) {
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli-vite/boot-files
     boot: [
-
+      // 'keycloak',
+      'auth',
       'axios',
     ],
 
@@ -47,12 +48,18 @@ module.exports = configure(function (/* ctx */) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
     build: {
+      env: {
+        VUE_APP_KEYCLOAK_URL: 'http://localhost:8080/', //production url goes here
+        VUE_APP_KEYCLOAK_CLIENT_ID: 'wsutcsc',  // 'cs420',
+        VUE_APP_KEYCLOAK_REALM:  'wsutcsr', // 'cs420-realm',
+      },
+
       target: {
         browser: [ 'es2019', 'edge88', 'firefox78', 'chrome87', 'safari13.1' ],
         node: 'node16'
       },
 
-      vueRouterMode: 'hash', // available values: 'hash', 'history'
+      vueRouterMode: 'history', // available values: 'hash', 'history'
       // vueRouterBase,
       // vueDevtools,
       // vueOptionsAPI: false,

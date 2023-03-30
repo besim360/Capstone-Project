@@ -13,7 +13,7 @@ def authenticateUser (email : str, password : str):
     data={'username' : email, 
         'password' : password, 
         'grant_type' : 'password', 
-        'client_id' : 'rest-client'})
+        'client_id' : client})
     data = json.loads(request.text)
     bearer_token = data["access_token"]
     public_key = "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxSR112675T/+eZBYIi5q/OCKfhMGTmA9VjMEjDHCaG/eKxmCLQUQXNtS3yNvCBQG/L55eIS4GwmYPYgj0FW3eQeu6A+KAJuSsLvQTRlEKgdgOqRl7j7c29yuShr1zYEQVfUr4y4XLbAU2WQ+y5EQU3VmNO9ebgFWBEjwWQtdLgSlgaQg4JdlaWvKQIFxzd9mJcC4YmYnUir+q46lh8RUDUglqwoTQmSTnkZ3nIn/N+SQM8L5l9d4/o9FMo+FDXVXjzoDAqMTDWPrCy02sTZKiLslCxkW1enPB+BBDJ4o+XCcbaOD5Twd/ON7YZ3IpQRsiLS8CcYSEZCE8LvUrH1hRQIDAQAB\n-----END PUBLIC KEY-----"
