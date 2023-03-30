@@ -2,15 +2,17 @@ from fastapi import APIRouter
 import httpx
 import json
 keycloak = APIRouter()
-
+realm = "wsutcsr"
+client = "wsutcsc"
 #Authenticate the user with username and password, and receive their bearer token.
 @keycloak.post("/authenticate-user")
 def authenticateUser (username : str, password : str):
-    request = httpx.post("http://localhost:8080/realms/cs420/protocol/openid-connect/token", 
+    request = httpx.post(f"http://localhost:8080/realms/{realm}/protocol/openid-connect/token",
+    headers={'Content-Type', 'application/json'},
     data={'username' : username, 
         'password' : password, 
         'grant_type' : 'password', 
-        'client_id' : 'rest-client'})
+        'client_id' : client})
     data = json.loads(request.text)
     return data
 
@@ -18,7 +20,7 @@ def authenticateUser (username : str, password : str):
 #Retrieve all current users.
 @keycloak.get("/retrieve-all-users")
 def getCurrentUsers(token : str):
-    request = httpx.get("http://localhost:8080/admin/realms/cs420/users", 
+    request = httpx.get(f"http://localhost:8080/admin/realms/{realm}/users", 
     headers= {'Authorization': 'Bearer ' + token})
     request = json.loads(request.text)
     return request
@@ -27,7 +29,7 @@ def getCurrentUsers(token : str):
 #Retrieve specified user based on their email, and return their Keycloak ID.
 @keycloak.get("/retrieve-user")
 def retrieveUser(email : str, token : str):
-    request = httpx.get("http://localhost:8080/admin/realms/cs420/users",
+    request = httpx.get(f"http://localhost:8080/admin/realms/{realm}/users",
     headers={'Authorization': 'Bearer ' + token},
     params={'email' : email})
     request = json.loads(request.text)
@@ -39,7 +41,7 @@ def retrieveUser(email : str, token : str):
 def setUserPassword(email : str, newPassword : str, token : str):
     userObject = retrieveUser(email, token)
     userid = userObject[0]["id"]
-    request = httpx.put("http://localhost:8080/admin/realms/cs420/users/"+userid+"/reset-password",
+    request = httpx.put(f"http://localhost:8080/admin/realms/{realm}/users/{userid}/reset-password",
     headers={'Authorization': 'Bearer ' + token},
     json={"value":newPassword})
     return request.status_code
@@ -48,7 +50,7 @@ def setUserPassword(email : str, newPassword : str, token : str):
 #Create a user with specified paramaters.
 @keycloak.post("/create-user")
 def createUser(email : str, firstName : str, lastName : str, password : str, token : str):
-    request = httpx.post("http://localhost:8080/admin/realms/cs420/users",
+    request = httpx.post(f"http://localhost:8080/admin/realms/{realm}/users",
     headers={'Authorization': 'Bearer ' + token},
     json={"email": email,
         "emailVerified": False,
@@ -68,7 +70,7 @@ def createUser(email : str, firstName : str, lastName : str, password : str, tok
 def deleteUser(email : str, token : str):
     userObject = retrieveUser(email, token)
     userid = userObject[0]["id"]
-    request = httpx.delete("http://localhost:8080/admin/realms/cs420/users/"+userid,
+    request = httpx.delete(f"http://localhost:8080/admin/realms/{realm}/users/{userid}",
     headers={'Authorization': 'Bearer ' + token})
     return request.status_code
     
@@ -76,8 +78,8 @@ def deleteUser(email : str, token : str):
 #Function to promote a regular user to Admin user - to implement.
 @keycloak.post("/promote-user")
 def promoteUser(email : str, token : str):
-    userID = retrieveUser(email, token)
-    request = httpx.post("http://localhost:8080/admin/realms/cs420/users/"+userID+"/role-mkeycloakings/realm",
+    userid = retrieveUser(email, token)
+    request = httpx.post(f"http://localhost:8080/admin/realms/{realm}/users/{userid}//role-mkeycloakings/realm",
     headers={'Authorization': 'Bearer ' + token},
     json={"id": "roleId,",
         "name": "roleName"})

@@ -70,7 +70,7 @@
     </div>
 
     <q-item class="bg-secondary" style="justify-content: center;">        <!--  Add New Folder -->
-      <q-btn color="accent" label="Add Folder" />
+      <GlobalDialog type="AddFolder" label="Add Folder" :value="blank"></GlobalDialog>
     </q-item>
 
     <q-item class="bg-primary q-pa-xs">                                  <!--  Recent Searches -->
@@ -79,23 +79,20 @@
         </q-item-section>
         <q-item-section class="text-white text-subtitle1"> Recent Searches </q-item-section>
     </q-item>
-
-    <div class="row" v-for="n in 1" :key="n" style="justify-content: center;">
-      <q-item>
-        <q-icon color="black" name="saved_search" class="q-pa-sm"/>
-        <q-item-section avatar class="text-blue text-subtitle2"> The Case for "Living" Models </q-item-section>
-      </q-item>
-
+    <div v-if="userStore.searchHistory.length > 0">
+      <div class="row" v-for="record in userStore.searchHistory" :key="record.id" style="justify-content: center;">
+        <q-item>
+          <q-icon color="black" name="saved_search" class="q-pa-sm"/>
+          <q-btn color="blue" flat push @click="() => {historyClick(record)}">{{ record.query }}</q-btn>
+        </q-item>
+      </div>
     </div>
-
-
-
-
+    <div v-else style="margin-top: 20px;">
+      <div class="row" style="justify-content: center;">
+        No recent searches...
+      </div>
+    </div>
     </q-drawer>
-
-
-
-
     <q-page-container>
       <router-view />
     </q-page-container>
@@ -104,17 +101,73 @@
 </template>
 
 <script setup lang="ts">
+import { AxiosInstance } from 'axios';
+import { inject, ref } from 'vue';
 import AuthService from 'src/auth/AuthService';
 import useUserStore from 'src/auth/userStore';
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router';
+import { HistoryRecord } from 'src/api/models/history';
+import { useSearchStore } from 'src/stores/search';
+import { SearchRecord } from 'src/api/models/search';
+import GlobalDialog from 'src/components/GlobalDialog.vue';
 
 const router = useRouter();
 const userStore = useUserStore();
+const searchStore = useSearchStore();
+
+const blank = ref({} as SearchRecord)
+
 const openDrawer = computed(() => {
   const isHome = router.currentRoute.value.name === 'home';
-  return userStore.loggedIn && !isHome;
+  const isIndex = router.currentRoute.value.name === 'index';
+  return userStore.loggedIn && !isHome && !isIndex;
 })
+
+onMounted( async () => {
+  if (userStore.loggedIn) {
+    const userapi: AxiosInstance = inject('userapi') as AxiosInstance;
+    const userID = await AuthService.AuthWrapper.User.auth_id;
+    const userHistory = await userapi.get('/history/'+userID)
+    userStore.setSearchHistory(userHistory.data)
+  }
+
+
+  // const historySample = {
+  //   uid: userID,
+  //   query: 'Sample Query String',
+  //   results: [
+  //     {
+  //       id: '1',
+  //       title: 'test',
+  //       authors: 'blarg',
+  //       sourceAbbrev: 'blarg2',
+  //       sourceLong: 'blargLong',
+  //       volNum: '2',
+  //       date: new Date().toDateString(),
+  //       startYear: '2024',
+  //       endYear: '2040',
+  //       pages: '5',
+  //       subjectCodes: 'etc',
+  //       topics: 'blah,',
+  //       doi: '12331921l',
+  //     }
+  //   ]
+  // }
+  // const user = await userapi.post('/history/', historySample);
+  // console.log(user);
+  // const token = await AuthService.AuthWrapper.GetAuthToken()
+  // console.log(token);
+})
+
+const historyClick = (searchHistory: HistoryRecord) => {
+  searchStore.clearQuery()
+  searchStore.setResults(searchHistory.results)
+  searchStore.updateQuery(0, searchHistory.query, 'All', 'NA')
+  console.log('history click');
+  router.push('/results');
+}
+
 
 const isAdmin = computed(() => {
   return AuthService.AuthWrapper.HasRole('RealmAdmin');

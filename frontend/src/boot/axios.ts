@@ -32,10 +32,16 @@ export default boot(({ app }) => {
   app.config.globalProperties.$axios = axios;
   // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)
   //       so you won't necessarily have to import axios in each vue file
+  app.provide('axios', app.config.globalProperties.$axios);
+  // ^ ^ ^ used to inject into a script see main layout for example
 
   app.config.globalProperties.$userapi = UserApi;
-  // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
-  //       so you can easily perform requests against your app's API
+  app.provide('userapi', app.config.globalProperties.$userapi);
   app.config.globalProperties.$searchapi = SearchApi;
+  app.provide('searchapi', app.config.globalProperties.$searchapi);
 });
+
+export {axios}
+
+
 

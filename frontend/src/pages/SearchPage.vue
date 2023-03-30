@@ -10,7 +10,7 @@
             <q-icon name="search" color="primary" />
           </template>
         </q-input>
-        <GlobalDialog type="AdvancedSearch" label="Advanced Search"></GlobalDialog>
+        <GlobalDialog type="AdvancedSearch" label="Advanced Search" value=""></GlobalDialog>
         <div class="row justify-center">
           <q-btn  class="col-2 q-mt-xl" label="Search" type="submit" color="primary"/>
         </div>

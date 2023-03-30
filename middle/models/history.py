@@ -21,5 +21,6 @@ class Document(BaseModel):
 class History(BaseModel):
     uid : str
     query : str
+    queryDate : str
     results : List[Document]
 
