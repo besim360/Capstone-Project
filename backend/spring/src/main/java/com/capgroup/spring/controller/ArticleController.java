@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -73,11 +74,13 @@ public class ArticleController {
     3) API either returns 401 unauthorized (if keycloak returns unauthorized) OR API does the thing and returns its response
      */
     @GetMapping("/search")
-    public List<?> searchArticles(SearchRequestDTO searchRequestDTO) {
+    public List<?> searchArticles(@RequestParam(value = "text", required = true) String text, @RequestParam(value="fields", required = false) String fields,
+                                  @RequestParam(value = "limit", required = false) int limit) {
 
-        log.info("Request for article search received with data : " + searchRequestDTO);
+        log.info("Request for article search received with data : " + text + "," + fields + "," + limit); //nasty string depending on how it gets formatted under the hood.
+        List<String> fieldList = Arrays.stream(fields.split(",",0)).toList(); //same here
 
-        return articleService.searchArticles(searchRequestDTO.getText(), searchRequestDTO.getFields(), searchRequestDTO.getLimit());
+        return articleService.searchArticles(text, fieldList, limit);
     }
 
 
