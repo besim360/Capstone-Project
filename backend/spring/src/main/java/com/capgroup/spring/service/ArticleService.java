@@ -25,7 +25,7 @@ import java.util.List;
 public class ArticleService {
     private final ArticleRepository articleRepository;
 
-    private static final List<String> SEARCHABLE_FIELDS = Arrays.asList("title", "authors", "sourceLong", "topics", "doi", "sourceAbbrev", "fullText");
+    private static final List<String> SEARCHABLE_FIELDS = Arrays.asList("title", "authors", "sourceLong", "topics", "doi", "sourceAbbrev", "subjectCodes", "fullText");
 
     public ArticleService(ArticleRepository articleRepository) {
         this.articleRepository = articleRepository;
