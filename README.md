@@ -47,3 +47,9 @@ To see the collections and data you can run commands through cli or download the
 ## Running the API Dev Mode
 
 uvicorn index:app --reload
+
+## Backend Local Setup and Instructions
+- Open project in IntelliJ or install Maven
+- Download dependencies through Maven
+- Either download PDFs and database through Murphy's Dropbox or get them through the discord and extract them to your backend/spring/ directory
+- Run spring-boot:run command through IntelliJ or Maven
