@@ -3,16 +3,30 @@ package com.capgroup.pdfparser;
 //sourced from Apache's website and Stack Overflow
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 
 
 public class PDFMain {
-    /*it is up in the air whether or not parsing of a directory will be handled here or in conjunction with parsing the .xlsl dumps, currently this
-    class supports the possibility of parsing all the existing files, then parsing a PDF on a new article being added to the database not through filemaker pro
+    /**
+     * Parses PDF and returns all text in string format, make sure to wrap any calls of this function with a try and except
      */
     public static String parseFile(File pdfFile) throws IOException {
         PDDocument doc = PDDocument.load(pdfFile);
-        return new PDFTextStripper().getText(doc);
+        var stripper = new PDFTextStripper();
+        stripper.setLineSeparator(" ");
+        String text = stripper.getText(doc).replaceAll("\n","");
+        doc.close();
+        return text;
+    }
+    public static String parseStream(InputStream pdfFile) throws IOException {
+        PDDocument doc = PDDocument.load(pdfFile);
+        var stripper = new PDFTextStripper();
+        stripper.setLineSeparator(" ");
+        String text = stripper.getText(doc).replaceAll("\n","");
+        doc.close();
+        return text;
     }
 }

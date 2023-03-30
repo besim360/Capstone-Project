@@ -1,16 +1,31 @@
 server:
-  port: 9000
+  port: 9001
 
 spring:
   datasource:
-    url: jdbc:h2:mem:mydb
+    url: jdbc:h2:file:./database/h2
     username: capstone
     password: password
+
   jpa:
+    hibernate:
+      ddl-auto: update
     open-in-view: false
     properties:
       hibernate:
+
         search:
           backend:
             type: lucene
-            directory.root: ./backend/spring/data/index
+            directory.root: ./data/index
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080/realms/cs420
+          jwk-set-uri: http://localhost:8080/realms/cs420/protocol/openid-connect/certs
+
+capstone:
+  jwt:
+    issuerUri: http://localhost:8080/realms/cs420
+

@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/Capstone-Project.iml" filepath="$PROJECT_DIR$/.idea/Capstone-Project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/backend/spring/spring.iml" filepath="$PROJECT_DIR$/backend/spring/spring.iml" />
     </modules>
   </component>
 </project>
