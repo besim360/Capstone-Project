@@ -119,6 +119,3 @@ def changeStatus(email : str, request : Request, status : bool):
     request = httpx.put("http://localhost:8080/admin/realms/cs420/users/"+userid,
     headers={'Authorization': 'Bearer ' + token}, json={"enabled":status})
     return request.status_code
-
-if __name__ ==  "__main__":
-    uvicorn.run(app, port = 8000, host = "0.0.0.0")
