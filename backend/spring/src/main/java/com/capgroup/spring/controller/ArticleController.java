@@ -17,6 +17,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
+@CrossOrigin(origins = "http://localhost:9000/")
 @RequestMapping("/article")
 public class ArticleController {
     private final ArticleService articleService;
