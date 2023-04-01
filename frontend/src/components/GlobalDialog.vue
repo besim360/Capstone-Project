@@ -127,7 +127,9 @@ const dialogDisplayHandler = () => {
 }
 
 const addSearchField = () => {
-  searchStore.addNewQueryLine()
+  if(Object.keys(searchStore.queryLine).length <= 7){
+    searchStore.addNewQueryLine()
+  }
 }
 
 const clearSearchFields = () => {
@@ -178,7 +180,6 @@ const dialogCloseHandler = () => {
     store.clearAddFolderForm();
     store.removeFolderForm();
   }
-
 }
 
 const dialogSearchHandler = () => {
