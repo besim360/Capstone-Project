@@ -27,14 +27,7 @@ public class SecurityConfiguration{
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{ //https://docs.spring.io/spring-security/reference/servlet/authorization/authorize-http-requests.html
-        /*http
-                .securityMatcher("/article/admin/**") //should only check authorization within /article/admin
-                .authorizeRequests(authorize -> authorize
-                        //.requestMatchers("/search/**").permitAll()
-                        .requestMatchers("/article/admin/**").hasRole("admin")
-                        .anyRequest().authenticated()
-                );*/
-                //http.httpBasic().disable(); //temporary stopgap when debugging
+
         http.sessionManagement(smc -> {
             smc.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
                 });

@@ -21,7 +21,7 @@ public class PDFMain {
         doc.close();
         return text;
     }
-    public static String parseStream(InputStream pdfFile) throws IOException {
+    public static String parseFile(InputStream pdfFile) throws IOException {
         PDDocument doc = PDDocument.load(pdfFile);
         var stripper = new PDFTextStripper();
         stripper.setLineSeparator(" ");

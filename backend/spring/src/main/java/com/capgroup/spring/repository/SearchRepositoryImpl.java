@@ -1,6 +1,5 @@
 package com.capgroup.spring.repository;
 
-import com.capgroup.spring.model.ArticleProjection;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
@@ -25,7 +24,7 @@ import java.util.List;
 public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID>
         implements SearchRepository<T, ID> {
 
-    private final EntityManager entityManager;
+    private EntityManager entityManager;
 
     public SearchRepositoryImpl(Class<T> domainClass, EntityManager entityManager) {
         super(domainClass, entityManager);
@@ -38,57 +37,26 @@ public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaR
         this.entityManager = entityManager;
     }
 
-
     @Override
-    public List searchBy(String text, int limit, String... fields) {
-        SearchResult<ArticleProjection> result = getSearchResult(text, limit, fields);
+    public List<T> searchBy(String text, int limit, String... fields) {
+        SearchResult<T> result = getSearchResult(text, limit, fields);
 
         return result.hits();
     }
 
-    private SearchResult<ArticleProjection> getSearchResult(String text, int limit, String[] fields) {
+    private SearchResult<T> getSearchResult(String text, int limit, String[] fields) {
         SearchSession searchSession = Search.session(entityManager);
 
-        SearchResult<ArticleProjection> result =
+        SearchResult<T> result =
                 searchSession
                         .search(getDomainClass())
-                        .select(f-> f.composite(
-                                list -> new ArticleProjection(
-                                        (Long) list.get(0),         //id
-                                        (String) list.get(1),       //title
-                                        (String) list.get(2),       //authors
-                                        (String) list.get(3),       //sourceAbbrev
-                                        (String) list.get(4),       //sourceLong
-                                        (String) list.get(5),       //volNum
-                                        (String) list.get(6),       //date
-                                        (Integer) list.get(7),      //startYear
-                                        (Integer) list.get(8),      //endYear
-                                        (String) list.get(9),       //pages
-                                        (String) list.get(10),      //subjectCodes
-                                        (String) list.get(11),      //topics
-                                        (String) list.get(12)       //doi
-                                ),
-                                f.id(Long.class),
-                                f.field("title", String.class),
-                                f.field("authors", String.class),
-                                f.field("sourceAbbrev", String.class),
-                                f.field("sourceLong", String.class),
-                                f.field("volNum", String.class),
-                                f.field("date", String.class),
-                                f.field("startYear", Integer.class),
-                                f.field("endYear", Integer.class),
-                                f.field("pages", String.class),
-                                f.field("subjectCodes", String.class),
-                                f.field("topics", String.class),
-                                f.field("doi", String.class)
-                        ))
                         .where(f -> f.match().fields(fields).matching(text))
                         .fetch(limit);
         return result;
     }
 
     @Override
-    public List boolSearchBy(ArrayList<List<String>> queries, int limit){
+    public List<T> boolSearchBy(ArrayList<List<String>> queries, int limit){
         return getBoolSearchResult(queries, limit);
     }
 
