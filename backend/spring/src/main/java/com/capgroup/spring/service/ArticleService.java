@@ -18,7 +18,7 @@ import java.util.List;
 
 
 /**
- * The business layer that forwards the call to the searchBy function
+ * The business layer
  */
 @Service
 @Slf4j
