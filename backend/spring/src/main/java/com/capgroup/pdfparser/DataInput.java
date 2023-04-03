@@ -1,21 +1,22 @@
 package com.capgroup.pdfparser;
 
+import com.capgroup.spring.model.Article;
+import com.capgroup.spring.model.Subject;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-
-import com.capgroup.pdfparser.PDFMain;
-import com.capgroup.spring.model.Article;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import java.util.*;
 
 
 
+@Component
 public class DataInput {
 
 
@@ -23,15 +24,16 @@ public class DataInput {
      * Reads Excel file located at pathToMain and creates an Article for each row based on contents of that file.
      * @param pathToMain path to the main Excel file
      * @param pathToSources path to the Excel file containing sources
-     * @param pathToSubjects path to the Excel file containing subject codes
+     * @param subjectMap map containing subjects to insert into article
      * @param pathToTexts path to a folder containing PDF files for parsing
      * @return an ArrayList of articles to build the index/database from
-     * @throws IOException
+     * @throws IOException problems with file parsing may occur
      */
-    public static ArrayList<Article> enterData(String pathToMain, String pathToSources, String pathToSubjects, String pathToTexts) throws IOException {
+    @Transactional
+    public static ArrayList<Article> enterData(String pathToMain, String pathToSources, Map<String, Subject> subjectMap, String pathToTexts) throws IOException {
 
         HashMap<String, String> sourceMap = createMapFromSheet(pathToSources, 63, 1, 0);
-        HashMap<String, String> subjectMap = createMapFromSheet(pathToSubjects, 582, 2, 0);
+        //HashMap<String, String> subjectMap = createMapFromSheet(pathToSubjects, 582, 2, 0);
 
         FileInputStream file = new FileInputStream(new File(pathToMain));
         Workbook workbook = new XSSFWorkbook(file);
@@ -103,11 +105,28 @@ public class DataInput {
 
             // need to add topics
             if (row.getCell(9) != null) {
-                String codeString = row.getCell(9).getStringCellValue().replace("/", " ");
+                String codeString = row.getCell(9).getStringCellValue().replace("/", " "); //replace is here due to mistake in excel files
+                //System.out.println("Code from cell: " + codeString);
                 String[] codeArray = codeString.split(" ");
+                //Set<Subject> subjectSet = new HashSet<>();
+                for (var code : codeArray){
+                    if (!code.isEmpty()) {
+                        //System.out.println("Code: " + code);
+                        try {
+                           //var codeLong = Long.parseLong(code);
+                           var subject = subjectMap.get(code);
+                           if (subject != null) {
+                               //subjectSet.add(subject); //grabs all relevant subject objects and inserts them into the set
+                               article.addSubject(subject);
+                           }
+                        } catch (NumberFormatException e) {
+                            System.out.println(e.getMessage());
+                        }
+                    }
+                }
+                //article.setSubjectCodes(subjectSet);
 
-                article.setSubjectCodes(codeString);
-                article.setTopics(codeToTopic(codeArray, subjectMap).replaceAll("\\p{Punct}", ""));
+                //article.setTopics(codeToTopic(codeArray, subjectMap).replaceAll("\\p{Punct}", ""));
             }
 
 
@@ -115,12 +134,42 @@ public class DataInput {
         }
         return articles;
     }
+    public static Map<String, Subject> getSubjects(String pathToSubjects) throws IOException{
+
+        FileInputStream file = new FileInputStream(new File(pathToSubjects));
+        Workbook workbook = new XSSFWorkbook(file);
+        Map<String, Subject> subjectMap = new HashMap<>(64);
+        Sheet sheet = workbook.getSheetAt(0);
+        for (Row row : sheet){
+            if (row.getRowNum() == 0){
+                continue;
+            }
+            Subject subject = new Subject();
+            //assuming subjectTopic,subjectGenTopic, subjectCode all mandatory
+            var subjectTopic = row.getCell(0);
+            var subjectGenTopic = row.getCell(1);
+            var subjectCode = row.getCell(2);
+            if (subjectCode  == null || subjectGenTopic == null || subjectTopic == null){
+                System.out.println("WARNING: One of the subject code columns are incomplete.");
+                continue;
+            }
+            subject.setSubjectCode(subjectCode.getStringCellValue());
+            var genTopicString = subjectGenTopic.getStringCellValue();
+            var topicString = subjectTopic.getStringCellValue();
+            genTopicString = genTopicString.replaceAll("\\p{Punct}", "");
+            topicString = topicString.replaceAll("\\p{Punct}", "");
+            subject.setTopics(topicString);
+            subject.setGeneralTopic(genTopicString);
+            subjectMap.put(subject.getSubjectCode(), subject);
+        }
+        return subjectMap;
+    }
 
     private static String abbrevToLong(String abbrev, HashMap<String, String> map){
         return map.get(abbrev);
     }
 
-    private static String codeToTopic(String[] codes, HashMap<String, String> map){
+    /*private static String codeToTopic(String[] codes, HashMap<String, String> map){
 
         String topics = "";
         for (String code : codes){
@@ -134,7 +183,7 @@ public class DataInput {
         }
         return topics;
 
-    }
+    }*/
 
     /**
      * Creates a HashMap from an Excel file where the keys of the map are the values from a specified column and the

@@ -1,9 +1,6 @@
 package com.capgroup.spring.repository;
 
-import com.capgroup.spring.model.Article;
-import com.capgroup.spring.model.ArticleProjection;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.xml.builders.BooleanQueryBuilder;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.TermQuery;
@@ -27,7 +24,7 @@ import java.util.List;
 public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaRepository<T, ID>
         implements SearchRepository<T, ID> {
 
-    private final EntityManager entityManager;
+    private EntityManager entityManager;
 
     public SearchRepositoryImpl(Class<T> domainClass, EntityManager entityManager) {
         super(domainClass, entityManager);
@@ -41,147 +38,28 @@ public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaR
     }
 
     @Override
-    public List searchBy(String text, int limit, String... fields) {
-        SearchResult<ArticleProjection> result = getSearchResult(text, limit, fields);
+    public List<T> searchBy(String text, int limit, String... fields) {
+        SearchResult<T> result = getSearchResult(text, limit, fields);
 
         return result.hits();
     }
 
-    private SearchResult<ArticleProjection> getSearchResult(String text, int limit, String[] fields) {
+    private SearchResult<T> getSearchResult(String text, int limit, String[] fields) {
         SearchSession searchSession = Search.session(entityManager);
 
-        SearchResult<ArticleProjection> result =
+        SearchResult<T> result =
                 searchSession
                         .search(getDomainClass())
-                        .select(f-> f.composite(
-                                list -> new ArticleProjection(
-                                        (Long) list.get(0),         //id
-                                        (String) list.get(1),       //title
-                                        (String) list.get(2),       //authors
-                                        (String) list.get(3),       //sourceAbbrev
-                                        (String) list.get(4),       //sourceLong
-                                        (String) list.get(5),       //volNum
-                                        (String) list.get(6),       //date
-                                        (Integer) list.get(7),      //startYear
-                                        (Integer) list.get(8),      //endYear
-                                        (String) list.get(9),       //pages
-                                        (String) list.get(10),      //subjectCodes
-                                        (String) list.get(11),      //topics
-                                        (String) list.get(12)       //doi
-                                ),
-                                f.id(Long.class),
-                                f.field("title", String.class),
-                                f.field("authors", String.class),
-                                f.field("sourceAbbrev", String.class),
-                                f.field("sourceLong", String.class),
-                                f.field("volNum", String.class),
-                                f.field("date", String.class),
-                                f.field("startYear", Integer.class),
-                                f.field("endYear", Integer.class),
-                                f.field("pages", String.class),
-                                f.field("subjectCodes", String.class),
-                                f.field("topics", String.class),
-                                f.field("doi", String.class)
-                        ))
                         .where(f -> f.match().fields(fields).matching(text))
                         .fetch(limit);
         return result;
     }
 
-    /**
-     * This will take a list of queries. Each query is a collection of strings passed in a very particular order. The
-     * text of the query is in the 0th position, the field is in the 1st position, and the boolean operator is in the
-     * 2nd position. It must be given in that order via the URL.
-     * @param queries the list of queries
-     * @param limit the max number of hits to be returned
-     * @return null
-     */
     @Override
     public List<T> boolSearchBy(ArrayList<List<String>> queries, int limit){
-        // might need to look into how boolean query is being built to make sure it is working properly
-        SearchSession searchSession = Search.session(entityManager);
-        BooleanQuery.Builder internal = new BooleanQuery.Builder();
-        BooleanQuery.Builder external = new BooleanQuery.Builder();
-        int clauses = 0;
-
-        for (int i = 0; i < queries.size(); i++){
-
-            List<String> q = queries.get(i);
-            String t = q.get(0);
-            String field = q.get(1);
-            TermQuery termQuery = new TermQuery(new Term(field, t));
-            String op = q.get(2);
-
-            if (op.toLowerCase().equals("not")) {
-                internal.add(termQuery, BooleanClause.Occur.MUST_NOT);
-                clauses++;
-            } else if (op.toLowerCase().equals("and")){
-                internal.add(termQuery, BooleanClause.Occur.MUST);
-                clauses++;
-            } else {
-                internal.add(termQuery, BooleanClause.Occur.SHOULD);
-                clauses++;
-            }
-        }
-
-        //b.setMinimumNumberShouldMatch(clauses);
-        external.add(internal.build(), BooleanClause.Occur.MUST);
-        BooleanQuery bq = external.build();
-
-        SearchResult<ArticleProjection> result = searchSession
-                .search(getDomainClass())
-                .extension(LuceneExtension.get())
-                .select(f-> f.composite(
-                        list -> new ArticleProjection(
-                                (Long) list.get(0),         //id
-                                (String) list.get(1),       //title
-                                (String) list.get(2),       //authors
-                                (String) list.get(3),       //sourceAbbrev
-                                (String) list.get(4),       //sourceLong
-                                (String) list.get(5),       //volNum
-                                (String) list.get(6),       //date
-                                (Integer) list.get(7),      //startYear
-                                (Integer) list.get(8),      //endYear
-                                (String) list.get(9),       //pages
-                                (String) list.get(10),      //subjectCodes
-                                (String) list.get(11),      //topics
-                                (String) list.get(12)       //doi
-                        ),
-                        f.id(Long.class),
-                        f.field("title", String.class),
-                        f.field("authors", String.class),
-                        f.field("sourceAbbrev", String.class),
-                        f.field("sourceLong", String.class),
-                        f.field("volNum", String.class),
-                        f.field("date", String.class),
-                        f.field("startYear", Integer.class),
-                        f.field("endYear", Integer.class),
-                        f.field("pages", String.class),
-                        f.field("subjectCodes", String.class),
-                        f.field("topics", String.class),
-                        f.field("doi", String.class)
-                ))
-                .where(f -> f.bool(
-                        b -> {
-                            b.must(f.fromLuceneQuery(bq));
-                        }
-                ))
-                .fetch(limit);
-
-        List<T> hits = (List<T>) result.hits();
-                /*
-                searchSession
-                        .search(getDomainClass())
-                        .extension(LuceneExtension.get())
-                        .where(f -> f.fromLuceneQuery(bq))
-                        .fetchHits(limit);
-
-                 */
-
-        return hits;
+        return getBoolSearchResult(queries, limit);
     }
 
-    /*
     /**
      * This will take a list of queries. Each query is a collection of strings passed in a very particular order. The
      * text of the query is in the 0th position, the field is in the 1st position, and the boolean operator is in the
@@ -190,8 +68,7 @@ public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaR
      * @param limit the max number of hits to be returned
      * @return null
      */
-    /*
-    private List getBoolSearchResult(ArrayList<List<String>> queries, int limit){
+    private List<T> getBoolSearchResult(ArrayList<List<String>> queries, int limit){
 
         // might need to look into how boolean query is being built to make sure it is working properly
         SearchSession searchSession = Search.session(entityManager);

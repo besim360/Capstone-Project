@@ -3,7 +3,7 @@ server:
 
 spring:
   datasource:
-    url: jdbc:h2:file:./backend/database/h2
+    url: jdbc:h2:file:./database/h2
     username: capstone
     password: password
 
@@ -17,15 +17,15 @@ spring:
         search:
           backend:
             type: lucene
-            directory.root: ./backend/spring/data/index
+            directory.root: ./data/index
   security:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/cs420
-          jwk-set-uri: http://localhost:8080/realms/cs420/protocol/openid-connect/certs
+          issuer-uri: http://localhost:8080/realms/wsutcsr
+          jwk-set-uri: http://localhost:8080/realms/wsutcsr/protocol/openid-connect/certs
 
 capstone:
   jwt:
-    issuerUri: http://localhost:8080/realms/cs420
+    issuerUri: http://localhost:8080/realms/wsutcsr
 

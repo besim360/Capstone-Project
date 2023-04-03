@@ -4,7 +4,6 @@
   <component name="MavenProjectsManager">
     <option name="originalFiles">
       <list>
-        <option value="$PROJECT_DIR$/middle/spring/pom.xml" />
         <option value="$PROJECT_DIR$/backend/spring/pom.xml" />
       </list>
     </option>

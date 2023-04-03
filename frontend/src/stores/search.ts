@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { SearchResults } from 'src/api/models/search';
 
 export interface TextField {
   category: 'Subject' | 'Author' | 'Title' | 'Source' | 'Year' | 'DOI' | 'Date Range' | 'All';
@@ -20,7 +21,8 @@ const newLineState = {
 
 export const useSearchStore = defineStore('search', {
   state: () => ({
-    queryLine: {0: initialState} as Record<number, TextField>
+    queryLine: {0: initialState} as Record<number, TextField>,
+    results: [] as SearchResults
   }),
   getters: {},
   actions: {
@@ -43,6 +45,7 @@ export const useSearchStore = defineStore('search', {
 
     clearQuery() {
       this.queryLine = {0: initialState}
+      this.results = [] as SearchResults
       console.log(this.queryLine)
     },
 
@@ -50,6 +53,10 @@ export const useSearchStore = defineStore('search', {
       const duplicateFirstEntry = this.queryLine[0]
       const resetState = {0: duplicateFirstEntry} as Record<number, TextField>
       this.queryLine = resetState
-    }
+    },
+
+    setResults(searchResults: SearchResults) {
+      this.results = searchResults
+    },
   },
 })
