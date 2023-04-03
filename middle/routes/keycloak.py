@@ -1,13 +1,15 @@
-from fastapi import FastAPI, Request
+from fastapi import APIRouter, Request
 import httpx
 import json
 import uvicorn
 import jwt
 
-app = FastAPI()
+keycloak = APIRouter()
+client="wsutcsc"
+realm="wsutcsr"
 
 #Authenticate the user with username and password, and receive their bearer token.
-@app.post("/authenticate-user/")
+@keycloak.post("/authenticate-user/")
 def authenticateUser (email : str, password : str):
     request = httpx.post("http://localhost:8080/realms/cs420/protocol/openid-connect/token", 
     data={'username' : email, 
@@ -26,7 +28,7 @@ def authenticateUser (email : str, password : str):
 
 
 #Retrieve all current users.
-@app.get("/retrieve-all-users/")
+@keycloak.get("/retrieve-all-users/")
 def getCurrentUsers(request: Request):
     token = request.headers.get('Authorization')
     request = httpx.get("http://localhost:8080/admin/realms/cs420/users", 
@@ -36,7 +38,7 @@ def getCurrentUsers(request: Request):
 
 
 #Retrieve specified user based on their email, and return their Keycloak ID.
-@app.get("/retrieve-user/")
+@keycloak.get("/retrieve-user/")
 def retrieveUser(email : str, request: Request):
     token = request.headers.get('Authorization')
     request = httpx.get("http://localhost:8080/admin/realms/cs420/users",
@@ -47,7 +49,7 @@ def retrieveUser(email : str, request: Request):
 
 
 #Set the password for specified user (forgot password functionality).
-@app.put("/set-password/")
+@keycloak.put("/set-password/")
 def setUserPassword(email : str, newPassword : str, request : Request):
     token = request.headers.get('Authorization')
     userObject = retrieveUser(email, token)
@@ -59,7 +61,7 @@ def setUserPassword(email : str, newPassword : str, request : Request):
 
 
 #Create a user with specified paramaters.
-@app.post("/create-user/")
+@keycloak.post("/create-user/")
 def createUser(email : str, firstName : str, lastName : str, password : str):
     token = request.headers.get('Authorization')
     request = httpx.post("http://localhost:8080/admin/realms/cs420/users",
@@ -78,7 +80,7 @@ def createUser(email : str, firstName : str, lastName : str, password : str):
 
 
 #Delete specified user account.
-@app.delete("/delete-user/")
+@keycloak.delete("/delete-user/")
 def deleteUser(email : str, request : Request):
     token = request.headers.get('Authorization')
     userObject = retrieveUser(email, token)
@@ -89,7 +91,7 @@ def deleteUser(email : str, request : Request):
     
 
 #Function to promote a regular user to Admin user.
-@app.post("/promote-user/")
+@keycloak.post("/promote-user/")
 def promoteUser(email : str, request : Request):
     token = request.headers.get('Authorization')
     userObject = retrieveUser(email, token)
@@ -100,7 +102,7 @@ def promoteUser(email : str, request : Request):
 
 
 #Function to demote an Admin user to regular user.
-@app.post("/demote-user/")
+@keycloak.post("/demote-user/")
 def demoteUser(email : str, request : Request):
     token = request.headers.get('Authorization')
     userObject = retrieveUser(email, token)
@@ -111,7 +113,7 @@ def demoteUser(email : str, request : Request):
 
 
 #Change status of the user (enabled/disabled)
-@app.post("/change-user-status/")
+@keycloak.post("/change-user-status/")
 def changeStatus(email : str, request : Request, status : bool):
     token = request.headers.get('Authorization')
     userObject = retrieveUser(email, token)
