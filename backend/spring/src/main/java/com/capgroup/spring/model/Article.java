@@ -1,18 +1,19 @@
 package com.capgroup.spring.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.Hibernate;
+import lombok.*;
+import org.hibernate.search.engine.backend.types.ObjectStructure;
 import org.hibernate.search.engine.backend.types.Projectable;
 import org.hibernate.search.engine.backend.types.Searchable;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.GenericField;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
+import org.hibernate.search.mapper.pojo.mapping.definition.annotation.IndexedEmbedded;
+import org.springframework.transaction.annotation.Transactional;
 
 
-import java.util.Objects;
+import java.util.*;
 
 
 /**
@@ -23,7 +24,8 @@ import java.util.Objects;
 @Getter
 @Setter
 @ToString
-
+@Transactional
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Article {
 
 
@@ -35,75 +37,84 @@ public class Article {
     public Article() {
     }
 
-    @Id()
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
+    @EqualsAndHashCode.Include
     private Long id;
 
+    @EqualsAndHashCode.Include
     @FullTextField(projectable = Projectable.YES)
     @Column(name = "title", columnDefinition = "VARCHAR(1024)")
     private String title;
+
 
     @FullTextField(projectable = Projectable.YES)
     @Column(name = "authors")
     private String authors;
 
+
     @FullTextField(projectable = Projectable.YES)
     @Column(name = "sourceAbbrev")
     private String sourceAbbrev;
+
 
     @FullTextField(projectable = Projectable.YES)
     @Column(name = "sourceLong")
     private String sourceLong;
 
+
     @FullTextField(projectable = Projectable.YES)
     @Column(name = "volNum")
     private String volNum;
+
 
     @FullTextField(projectable = Projectable.YES)
     @Column(name = "date")
     private String date;
 
+
     @GenericField(projectable = Projectable.YES)
     @Column(name = "startYear")
-    private int startYear;
+    private Integer startYear;
+
 
     @GenericField(projectable = Projectable.YES)
     @Column(name = "endYear")
-    private int endYear;
+    private Integer endYear;
+
 
     @FullTextField(searchable = Searchable.NO, projectable = Projectable.YES)
     @Column(name = "pages")
     private String pages;
 
-    @FullTextField(projectable = Projectable.YES)
-    @Column(name = "subjectCodes")
-    private String subjectCodes;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {
+            CascadeType.MERGE
+    })
+    @IndexedEmbedded(structure = ObjectStructure.NESTED, includeEmbeddedObjectId = true, includeDepth = 1)
+    @JoinTable(name = "articles_subjects", joinColumns = { @JoinColumn(name = "article_id") }, inverseJoinColumns = { @JoinColumn(name = "subject_id") })
+    private List<Subject> subjects = new ArrayList<>();
 
-    @FullTextField(analyzer = "standard", projectable = Projectable.YES)
-    @Column(name = "topics", columnDefinition = "VARCHAR(2048)")
-    private String topics;
+
 
     @FullTextField(projectable = Projectable.YES)
     @Column(name = "doi")
     private String doi;
 
 
+    @JsonIgnore
     @FullTextField(analyzer = "stop", projectable = Projectable.NO)
     @Column(name = "fullText", columnDefinition = "TEXT")
     private String fullText;
 
-    //replaces @EqualsandHashcode with these overrides
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Article article = (Article) o;
-        return id != null && Objects.equals(id, article.id);
+    public void addSubject(Subject subject){
+        subjects.add(subject);
+        subject.getArticles().add(this);
     }
 
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
+    public void removeSubject(Subject subject){
+        subjects.remove(subject);
+        subject.getArticles().remove(this);
     }
+
 }
