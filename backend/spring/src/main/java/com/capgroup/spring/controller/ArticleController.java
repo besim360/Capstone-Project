@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -95,14 +94,14 @@ public class ArticleController {
         log.info("Request for subject addition: [{},{},{}]", subjectCode, generalTopic, topics);
         this.subjectService.addSubject(subjectCode, generalTopic, topics);
     }
-    @PostMapping("/admin/updateSubject")
+    @PutMapping("/admin/updateSubject")
     public void updateSubject(@RequestParam(value = "subjectCode", required = true) String subjectCode,
                            @RequestParam(value = "generalTopic", required = false) String generalTopic,
                            @RequestParam(value = "topics", required = false) String topics){
         log.info("Request for subject updating: [{},{},{}]", subjectCode, generalTopic, topics);
         this.subjectService.updateSubject(subjectCode, generalTopic, topics);
     }
-    @DeleteMapping("/admin/subject/{id}")
+    @DeleteMapping("/admin/{subjectCode}")
     public void deleteSubject(@PathVariable String id){
         log.info("Request for subject deletion of ID : {}", id);
         this.subjectService.deleteSubject(id);
