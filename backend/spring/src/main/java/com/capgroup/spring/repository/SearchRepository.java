@@ -12,9 +12,10 @@ import java.util.List;
  */
 @NoRepositoryBean
 public interface SearchRepository<T, ID> extends JpaRepository<T, ID> {
-    List<T> searchBy(String text, int limit, String... fields);
+    List<T> searchBy(String text, Integer limit, String... fields);
 
-    List<T> boolSearchBy(ArrayList<List<String>> queries, int limit);
+    List<T> boolSearchBy(List<String> query, List<String> operators, List<String> fields, Integer startYear,
+                         Integer endYear, Integer limit);
 
 
     //List<T> boolSearchBy(List<String> text, List<String> boolOps, List<String> fields, int limit);

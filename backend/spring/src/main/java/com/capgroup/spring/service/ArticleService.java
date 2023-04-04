@@ -21,7 +21,7 @@ import java.util.*;
 
 
 /**
- * The business layer that forwards the call to the searchBy function
+ * The business layer
  */
 @Service
 @Slf4j
@@ -44,7 +44,7 @@ public class ArticleService {
     }
 
     @Transactional(readOnly = true)
-    public List<Article> searchArticles(String text, List<String> fields, int limit) {
+    public List<Article> searchArticles(String text, List<String> fields, Integer limit) {
 
         List<String> fieldsToSearchBy = fields.isEmpty() ? SEARCHABLE_FIELDS : fields;
         boolean containsInvalidField = fieldsToSearchBy.stream().anyMatch(f -> !SEARCHABLE_FIELDS.contains(f));
@@ -207,8 +207,9 @@ public class ArticleService {
 
 
     @Transactional(readOnly = true)
-    public List<Article> boolSearchArticles(ArrayList<List<String>> queries, int limit) {
+    public List<Article> boolSearchArticles(List<String> query, List<String> operators, List<String> fields,
+                                            Integer startYear, Integer endYear, Integer limit) {
 
-        return articleRepository.boolSearchBy(queries, limit);
+        return articleRepository.boolSearchBy(query, operators, fields, startYear, endYear, limit);
     }
 }
