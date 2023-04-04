@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 
 /**
@@ -95,14 +94,14 @@ public class ArticleController {
         log.info("Request for subject addition: [{},{},{}]", subjectCode, generalTopic, topics);
         this.subjectService.addSubject(subjectCode, generalTopic, topics);
     }
-    @PostMapping("/admin/updateSubject")
+    @PutMapping("/admin/updateSubject")
     public void updateSubject(@RequestParam(value = "subjectCode", required = true) String subjectCode,
                            @RequestParam(value = "generalTopic", required = false) String generalTopic,
                            @RequestParam(value = "topics", required = false) String topics){
         log.info("Request for subject updating: [{},{},{}]", subjectCode, generalTopic, topics);
         this.subjectService.updateSubject(subjectCode, generalTopic, topics);
     }
-    @DeleteMapping("/admin/subject/{id}")
+    @DeleteMapping("/admin/{subjectCode}")
     public void deleteSubject(@PathVariable String id){
         log.info("Request for subject deletion of ID : {}", id);
         this.subjectService.deleteSubject(id);
@@ -115,7 +114,7 @@ public class ArticleController {
 
     @GetMapping("/search")
     public List<Article> searchArticles(@RequestParam(value = "text", required = true) String text, @RequestParam(value="fields", required = false) String fields,
-                                  @RequestParam(value = "limit", required = false) int limit) {
+                                  @RequestParam(value = "limit", required = false) Integer limit) {
 
         log.info("Request for article search received with data : " + text + "," + fields + "," + limit); //nasty string depending on how it gets formatted under the hood.
         List<String> fieldList = null;
