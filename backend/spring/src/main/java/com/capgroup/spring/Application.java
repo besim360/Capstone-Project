@@ -34,8 +34,8 @@ public class Application {
 		SpringApplication.run(Application.class, args);
 	}
 
-
-	/*@Bean
+/*
+	@Bean
 	public ApplicationRunner initializeData(ArticleRepository articleRepository, SubjectRepository subjectRepository) throws Exception {
 		return (ApplicationArguments args) -> {
 			Map<String, Subject> subjectMap = DataInput.getSubjects("excelfiles/Subjects.xlsx");
@@ -52,13 +52,21 @@ public class Application {
 		return (ApplicationArguments args) -> {
 			indexer.indexPersistedData("com.capgroup.spring.model.Article");
 		};
-	}*/
+	}
 
+
+ */
+
+/*
 	@Bean
 	public ApplicationRunner initializeData(ArticleRepository articleRepository, SubjectRepository subjectRepository) throws Exception {
 		return (ApplicationArguments args) -> {
 		};
 	}
+
+
+ */
+
 
 
 }

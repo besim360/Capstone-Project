@@ -115,7 +115,7 @@ public class ArticleController {
 
     @GetMapping("/search")
     public List<Article> searchArticles(@RequestParam(value = "text", required = true) String text, @RequestParam(value="fields", required = false) String fields,
-                                  @RequestParam(value = "limit", required = false) int limit) {
+                                  @RequestParam(value = "limit", required = false) Integer limit) {
 
         log.info("Request for article search received with data : " + text + "," + fields + "," + limit); //nasty string depending on how it gets formatted under the hood.
         List<String> fieldList = null;
@@ -130,18 +130,23 @@ public class ArticleController {
 
 
     @GetMapping("/bool")
-    public List<Article> boolSearchArticles(BooleanRequestDTO booleanRequestDTO){
-        log.info("Request for boolean article search received with data: " + booleanRequestDTO);
-        ArrayList<List<String>> queries = new ArrayList<>(3);
-        queries.add(booleanRequestDTO.getQuery_one());
-        if(!booleanRequestDTO.getQuery_two().isEmpty()){
-            queries.add(booleanRequestDTO.getQuery_two());
-            if (!booleanRequestDTO.getQuery_three().isEmpty()){
-                queries.add(booleanRequestDTO.getQuery_three());
+    public List<Article> boolSearchArticles(@RequestParam(value = "query", required = true) List<String> query,
+                                            @RequestParam(value = "operators", required = true) List<String> operators,
+                                            @RequestParam(value = "fields", required = true) List<String> fields,
+                                            @RequestParam(value = "startYear", required = false) Integer startYear,
+                                            @RequestParam(value = "endYear", required = false) Integer endYear,
+                                            @RequestParam(value = "limit", required = false) Integer limit){
+        log.info("Request for boolean article search received with data: " + query + "," + operators + "," + fields + ", "
+                + startYear + ", " + endYear + ", " + limit);
+
+        if (startYear != null && endYear != null) {
+            if (startYear > endYear) {
+                Integer temp = startYear;
+                startYear = endYear;
+                endYear = temp;
             }
         }
-        return articleService.boolSearchArticles(queries, booleanRequestDTO.getLimit());
-        //return articleService.boolSearchArticles(booleanRequestDTO.getText(), booleanRequestDTO.getBoolOps(),
-        //        booleanRequestDTO.getFields(), booleanRequestDTO.getLimit());
+
+        return articleService.boolSearchArticles(query, operators, fields, startYear, endYear, limit);
     }
 }

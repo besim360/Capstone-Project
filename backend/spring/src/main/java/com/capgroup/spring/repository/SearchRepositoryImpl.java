@@ -1,9 +1,11 @@
 package com.capgroup.spring.repository;
 
+import com.capgroup.spring.model.Article;
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.document.IntPoint;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.*;
+import org.apache.lucene.util.QueryBuilder;
 import org.hibernate.search.backend.lucene.LuceneExtension;
 import org.hibernate.search.engine.search.query.SearchResult;
 import org.hibernate.search.mapper.orm.Search;
@@ -15,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import jakarta.persistence.EntityManager;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -25,6 +28,9 @@ public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaR
         implements SearchRepository<T, ID> {
 
     private EntityManager entityManager;
+
+    private static final List<String> SEARCHABLE_FIELDS = Arrays.asList("title", "authors", "sourceLong",
+            "subjects.topics", "doi", "sourceAbbrev", "subjects.subjectCode", "subjects.generalTopic", "fullText");
 
     public SearchRepositoryImpl(Class<T> domainClass, EntityManager entityManager) {
         super(domainClass, entityManager);
@@ -38,13 +44,13 @@ public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaR
     }
 
     @Override
-    public List<T> searchBy(String text, int limit, String... fields) {
+    public List<T> searchBy(String text, Integer limit, String... fields) {
         SearchResult<T> result = getSearchResult(text, limit, fields);
 
         return result.hits();
     }
 
-    private SearchResult<T> getSearchResult(String text, int limit, String[] fields) {
+    private SearchResult<T> getSearchResult(String text, Integer limit, String[] fields) {
         SearchSession searchSession = Search.session(entityManager);
 
         SearchResult<T> result =
@@ -56,104 +62,56 @@ public class SearchRepositoryImpl<T, ID extends Serializable> extends SimpleJpaR
     }
 
     @Override
-    public List<T> boolSearchBy(ArrayList<List<String>> queries, int limit){
-        return getBoolSearchResult(queries, limit);
+    public List<T> boolSearchBy(List<String> query, List<String> operators, List<String> fields, Integer startYear,
+                                Integer endYear, Integer limit){
+        return getBoolSearchResult(query, operators, fields, startYear, endYear, limit);
+    }
+
+    private void boolSearchAll(BooleanQuery.Builder internal, String term, String op){
+        for (String field : SEARCHABLE_FIELDS){
+            TermQuery termQuery = new TermQuery(new Term(field, term));
+            if (op.toLowerCase().equals("not")) {
+                internal.add(termQuery, BooleanClause.Occur.MUST_NOT);
+            } else if (op.toLowerCase().equals("and")){
+                internal.add(termQuery, BooleanClause.Occur.MUST);
+            } else {
+                internal.add(termQuery, BooleanClause.Occur.SHOULD);
+            }
+        }
     }
 
     /**
-     * This will take a list of queries. Each query is a collection of strings passed in a very particular order. The
-     * text of the query is in the 0th position, the field is in the 1st position, and the boolean operator is in the
-     * 2nd position. It must be given in that order via the URL.
-     * @param queries the list of queries
+     *
+     *
+     *
      * @param limit the max number of hits to be returned
      * @return null
      */
-    private List<T> getBoolSearchResult(ArrayList<List<String>> queries, int limit){
+    private List<T> getBoolSearchResult(List<String> query, List<String> operators, List<String> fields, Integer startYear,
+                                        Integer endYear, Integer limit) {
 
         // might need to look into how boolean query is being built to make sure it is working properly
         SearchSession searchSession = Search.session(entityManager);
-        BooleanQuery.Builder internal = new BooleanQuery.Builder();
-        BooleanQuery.Builder external = new BooleanQuery.Builder();
-        int clauses = 0;
-
-        for (int i = 0; i < queries.size(); i++){
-
-            List<String> q = queries.get(i);
-            String t = q.get(0);
-            String field = q.get(1);
-            TermQuery termQuery = new TermQuery(new Term(field, t));
-            String op = q.get(2);
-
-            if (op.toLowerCase().equals("not")) {
-                internal.add(termQuery, BooleanClause.Occur.MUST_NOT);
-                clauses++;
-            } else if (op.toLowerCase().equals("and")){
-                internal.add(termQuery, BooleanClause.Occur.MUST);
-                clauses++;
-
-            } else {
-                internal.add(termQuery, BooleanClause.Occur.SHOULD);
-                clauses++;
-            }
-
-        }
-
-        //b.setMinimumNumberShouldMatch(clauses);
-        external.add(internal.build(), BooleanClause.Occur.MUST);
-        BooleanQuery bq = external.build();
-        List<T> hits =
+        SearchResult<T> result =
                 searchSession
                         .search(getDomainClass())
-                        .extension(LuceneExtension.get())
-                        .where(f -> f.fromLuceneQuery(bq))
-                        .fetchHits(limit);
+                        .where(f -> f.bool(b -> {
+                            for (int i = 0; i < query.size(); i++) {
+                                switch (operators.get(i).toLowerCase()) {
+                                    case "and" -> b.must(f.match().field(fields.get(i)).matching(query.get(i)));
+                                    case "or" -> b.should(f.match().field(fields.get(i)).matching(query.get(i)));
+                                    case "not" -> b.mustNot(f.match().field(fields.get(i)).matching(query.get(i)));
+                                }
+                            }
+                            if (startYear != null){
+                                b.must(f.range().field("startYear").atLeast(startYear));
+                            }
+                            if (endYear != null){
+                                b.must(f.range().field("endYear").atMost(endYear));
+                            }
+                        }))
+                        .fetch(limit);
 
-        return hits;
+        return result.hits();
     }
-
-    /*
-    @Override
-    public List boolSearchBy(List<String> text, List<String> boolOps, List<String> fields, int limit){
-        return getBoolSearchResult(text, boolOps, fields, limit);
-    }
-
-    private List<Article> getBoolSearchResult(List<String> text, List<String> boolOps, List<String> fields, int limit){
-        SearchSession searchSession = Search.session(entityManager);
-        BooleanQuery.Builder b = new BooleanQuery.Builder();
-
-        int clauses = 0;
-        for (int i = 0; i < text.size(); i++){
-
-            String t = text.get(i);
-            String field = fields.get(i);
-            TermQuery termQuery = new TermQuery(new Term(field, t));
-            String op = boolOps.get(i);
-
-            if (op.toLowerCase().equals("not")) {
-                b.add(termQuery, BooleanClause.Occur.MUST_NOT);
-                clauses++;
-            } else if (op.toLowerCase().equals("and")){
-                b.add(termQuery, BooleanClause.Occur.MUST);
-                clauses++;
-
-            } else if (op.toLowerCase().equals("or")){
-                b.add(termQuery, BooleanClause.Occur.SHOULD);
-                clauses++;
-            }
-
-        }
-
-        //b.setMinimumNumberShouldMatch(clauses);
-        BooleanQuery bq = b.build();
-        List<Article> hits =
-                searchSession
-                        .search(Article.class)
-                        .extension(LuceneExtension.get())
-                        .where(f -> f.fromLuceneQuery(bq))
-                        .fetchHits(limit);
-
-        return hits;
-    }
-
-     */
 }
