@@ -20,13 +20,32 @@ async function attachToken(config: AxiosRequestConfig) {
     }
   }
 }
+// Remove this when production build
+async function attachCors(config: AxiosRequestConfig) {
+  return {
+    ...config,
+    headers: {
+      ...config.headers,
+      'Access-Control-Allow-Origin': '*',
+    }
+  }
+
+  // return {
+  //   ...config,
+  //   headers: {
+  //     ...config.headers,
+  //     'Access-Control-Allow-Origin': '*',
+  //   }
+  //   }
+  // }
+}
 
 export default boot(({ app }) => {
   const UserApi = axios.create({ baseURL: 'http://localhost:8000' });
   UserApi.interceptors.request.use(attachToken)
-
   const SearchApi = axios.create({ baseURL: 'http://localhost:9001' });
-  SearchApi.interceptors.request.use(attachToken)
+  UserApi.interceptors.request.use(attachToken)
+  SearchApi.interceptors.request.use(attachCors)
   // for use inside Vue files (Options API) through this.$axios and this.$api
 
   app.config.globalProperties.$axios = axios;

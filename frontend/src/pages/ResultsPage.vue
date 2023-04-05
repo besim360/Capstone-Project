@@ -18,14 +18,17 @@
         <div class="col-5">
           <q-item-label class="text-h6" lines="1">
             <span class="text-weight-medium"> {{ result.authors }} </span>
-            <GlobalDialog type="AddBookmark" label="AddBookmark" :value="result"></GlobalDialog>
+            <GlobalDialog type="AddBookmark" label="AddBookmark" :value="result" v-if="userStore.loggedIn"></GlobalDialog>
           </q-item-label>
-          <span class="text-blue-7 text-h6"> {{ result.doi }} </span>
+          <span class="text-blue-7 text-h6" v-if="result.doi !== 'N/A'">
+            <a :href="'https://www.doi.org/'+result.doi">{{ result.doi }}</a>
+          </span>
+          <p ellipsis no-wrap class="text-body2 no-margin"> {{ result.title }} </p>
           <p ellipsis no-wrap class="text-body2"> {{ result.sourceLong }} </p>
         </div>
 
         <div class=items-center style="align-items: center">
-          <q-btn label="Add Citation" type="submit" color="primary"/>
+          <q-btn label="Add Citation" type="submit" color="primary" v-if="userStore.loggedIn"/>
         </div>
 
       </div>
@@ -34,7 +37,7 @@
     <q-pagination
       v-model="page"
       :min="1"
-      :max="Math.ceil(totalResults / totalPages)"
+      :max="Math.ceil(totalPages)"
       input
     />
   </div>
@@ -45,6 +48,7 @@
 <script setup lang="ts">
 import { useQuasar } from 'quasar';
 import { useSearchStore } from 'src/stores/search';
+import useUserStore from 'src/auth/userStore';
 import GlobalDialog from 'src/components/GlobalDialog.vue';
 import { useRouter } from 'vue-router';
 import { storeToRefs } from 'pinia';
@@ -53,6 +57,7 @@ import { SearchRecord } from 'src/api/models/search';
 
 const $q = useQuasar();
 const searchStore = useSearchStore();
+const userStore = useUserStore();
 const {queryLine} = storeToRefs(searchStore)
 
 // const linkMax = ref(5);
@@ -61,10 +66,9 @@ const resultsPerPage = ref(10)
 const blank = ref({} as SearchRecord)
 
 const getDataPartition = computed(() => {
-  return searchStore.results.slice((page.value-1)*totalPages.value,(page.value - 1)*totalPages.value+totalPages.value)
+  return searchStore.results.slice((page.value-1)*(totalResults.value/totalPages.value),(page.value - 1)*(totalResults.value/totalPages.value)+(totalResults.value/totalPages.value))
 })
 const totalPages = computed(() => {
-
   return Math.ceil(totalResults.value / resultsPerPage.value)
 })
 

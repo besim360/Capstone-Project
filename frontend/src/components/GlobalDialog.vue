@@ -193,6 +193,7 @@ const dialogSearchHandler = () => {
     store.clearAddFolderForm();
     store.removeFolderForm();
   }
+  //TODO: Make advanced search query here
   router.push('/results');
   searchStore.clearQuery();
 }

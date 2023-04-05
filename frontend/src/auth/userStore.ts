@@ -44,12 +44,14 @@ const useUserStore = defineStore('user', {
     setSearchHistory(searchHistory: SearchHistory) {
       let history = [] as SearchHistory
       if(searchHistory.length > 1){
-        history = searchHistory.sort((a,b) => new Date(a.queryDate).getTime() - new Date(b.queryDate).getTime())
+        console.log('sorting history')
+        history = searchHistory.sort((a,b) => new Date(b.queryDate).getTime() - new Date(a.queryDate).getTime())
+        console.log(history)
       } else {
         history = searchHistory
       }
       this.searchHistory = history
-    }
+    },
   },
 });
 

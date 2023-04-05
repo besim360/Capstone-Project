@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { SearchHistory } from 'src/api/models/history';
 import { SearchResults } from 'src/api/models/search';
 
 export interface TextField {
@@ -35,6 +36,7 @@ export const useSearchStore = defineStore('search', {
       this.queryLine[queryline] = state;
       console.log(this.queryLine)
     },
+
     addNewQueryLine() {
       const keys = (Object.keys(this.queryLine))
       const numKeys = keys.map(Number)
@@ -46,6 +48,11 @@ export const useSearchStore = defineStore('search', {
     clearQuery() {
       this.queryLine = {0: initialState}
       this.results = [] as SearchResults
+      console.log(this.queryLine)
+    },
+
+    clearQueryText() {
+      this.queryLine = {0: initialState}
       console.log(this.queryLine)
     },
 

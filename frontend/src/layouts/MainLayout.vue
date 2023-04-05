@@ -1,6 +1,5 @@
 <template>
   <q-layout view="hHh LpR fFf">
-
     <q-header reveal elevated class="bl-30 text-dark">
       <div class="color-strip"></div>
       <q-toolbar class="rem-pad">
@@ -21,69 +20,56 @@
         <q-btn v-else @click="loginHandler" flat>Sign In</q-btn>
       </q-toolbar>
     </q-header>
-
-     <q-drawer v-model="openDrawer" side="left" overlay bordered persistent class="bl-30">    <!--    #Fix color later -->
-
+    <q-drawer v-model="openDrawer" side="left" overlay bordered persistent class="bl-30">    <!--    #Fix color later -->
       <q-item class="bg-primary q-pa-xs">                                       <!--  Bookmarks -->
         <q-item-section avatar>
           <q-icon color="white" name="bookmark" />
         </q-item-section>
-
         <q-item-section class="text-white text-subtitle1"> Bookmarks </q-item-section>
       </q-item>
-
-
       <div class="row" v-for="n in 1" :key="n" style="justify-content: center;">
-
-      <div style="max-width: 370px;  max-height: 350px;">
-        <q-list>
-          <q-expansion-item
-            class="text-subtitle2 text-black"
-            expand-separator
-            icon="folder"
-            label="Business and management"
-          >
-            <q-card>
-
-                <div class="row" v-for="n in 2" :key="n" style="justify-content: center;">
-                  <q-item class="">
-
-                    <q-icon color="black" name="folder" class="q-pa-sm"/>
-                    <q-item-section avatar class="text-blue text-subtitle2"> The Case for "Living" Models </q-item-section>
-
-                  </q-item>
-                </div>
-
-            </q-card>
-          </q-expansion-item>
-
-
-          <q-expansion-item
-            class="text-subtitle2 text-black"
-            expand-separator
-            icon="folder"
-            label="Technology"
-          >
-          </q-expansion-item>
-        </q-list>
-      </div>
+        <div style="max-width: 370px;  max-height: 350px;">
+          <q-list>
+            <q-expansion-item
+              class="text-subtitle2 text-black"
+              expand-separator
+              icon="folder"
+              label="Business and management"
+            >
+              <q-card>
+                  <div class="row" v-for="n in 2" :key="n" style="justify-content: center;">
+                    <q-item class="">
+                      <q-icon color="black" name="folder" class="q-pa-sm"/>
+                      <q-item-section avatar class="text-blue text-subtitle2"> The Case for "Living" Models </q-item-section>
+                    </q-item>
+                  </div>
+              </q-card>
+            </q-expansion-item>
+            <q-expansion-item
+              class="text-subtitle2 text-black"
+              expand-separator
+              icon="folder"
+              label="Technology"
+            >
+            </q-expansion-item>
+          </q-list>
+        </div>
     </div>
-
     <q-item class="bg-secondary" style="justify-content: center;">        <!--  Add New Folder -->
       <GlobalDialog type="AddFolder" label="Add Folder" :value="blank"></GlobalDialog>
     </q-item>
-
     <q-item class="bg-primary q-pa-xs">                                  <!--  Recent Searches -->
         <q-item-section avatar>
           <q-icon color="white" name="history" />
         </q-item-section>
         <q-item-section class="text-white text-subtitle1"> Recent Searches </q-item-section>
     </q-item>
-    <div v-if="userStore.searchHistory.length > 0">
-      <div class="row" v-for="record in userStore.searchHistory" :key="record.id" style="justify-content: center;">
-        <q-item>
-          <q-icon color="black" name="saved_search" class="q-pa-sm"/>
-          <q-btn color="blue" flat push @click="() => {historyClick(record)}">{{ record.query }}</q-btn>
+    <div v-if="userStore.searchHistory.length > 0" style="height: 50%;">
+      <div class="row" v-for="record in userStore.searchHistory" :key="record.id">
+        <q-item style="padding-right: 10px; padding-left: 10px; flex: 1;">
+          <!-- <q-icon color="black" name="saved_search" class="q-pa-sm"/> -->
+          <q-btn color="blue" flat push @click="() => {historyClick(record)}" style="padding-left: 0; padding-right: 0; flex: 1;">{{ reduceQueryLength(record.query) }}</q-btn>
+          <q-btn round flat icon="delete" color="blue" style="margin-left: auto;" @click="() => {deleteHistoryClick(record)}"></q-btn>
         </q-item>
       </div>
     </div>
@@ -96,7 +82,6 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-
   </q-layout>
 </template>
 
@@ -117,6 +102,7 @@ const userStore = useUserStore();
 const searchStore = useSearchStore();
 
 const blank = ref({} as SearchRecord)
+const userapi: AxiosInstance = inject('userapi') as AxiosInstance;
 
 const openDrawer = computed(() => {
   const isHome = router.currentRoute.value.name === 'home';
@@ -126,38 +112,10 @@ const openDrawer = computed(() => {
 
 onMounted( async () => {
   if (userStore.loggedIn) {
-    const userapi: AxiosInstance = inject('userapi') as AxiosInstance;
     const userID = await AuthService.AuthWrapper.User.auth_id;
     const userHistory = await userapi.get('/history/'+userID)
     userStore.setSearchHistory(userHistory.data)
   }
-
-
-  // const historySample = {
-  //   uid: userID,
-  //   query: 'Sample Query String',
-  //   results: [
-  //     {
-  //       id: '1',
-  //       title: 'test',
-  //       authors: 'blarg',
-  //       sourceAbbrev: 'blarg2',
-  //       sourceLong: 'blargLong',
-  //       volNum: '2',
-  //       date: new Date().toDateString(),
-  //       startYear: '2024',
-  //       endYear: '2040',
-  //       pages: '5',
-  //       subjectCodes: 'etc',
-  //       topics: 'blah,',
-  //       doi: '12331921l',
-  //     }
-  //   ]
-  // }
-  // const user = await userapi.post('/history/', historySample);
-  // console.log(user);
-  // const token = await AuthService.AuthWrapper.GetAuthToken()
-  // console.log(token);
 })
 
 const historyClick = (searchHistory: HistoryRecord) => {
@@ -168,6 +126,21 @@ const historyClick = (searchHistory: HistoryRecord) => {
   router.push('/results');
 }
 
+const deleteHistoryClick = async (searchHistory: HistoryRecord) => {
+  const userHistory = await userapi.delete(`/history/${userStore.user.auth_id}/${searchHistory.id}`)
+  userStore.setSearchHistory(userHistory.data)
+}
+
+const reduceQueryLength = (queryText: string) => {
+  let qtextshort
+  if(queryText.length > 20){
+    qtextshort = queryText.substring(0, 20)
+    qtextshort = qtextshort + '...'
+  } else {
+    qtextshort = queryText
+  }
+  return qtextshort
+}
 
 const isAdmin = computed(() => {
   return AuthService.AuthWrapper.HasRole('RealmAdmin');
