@@ -1,8 +1,8 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI
 from routes.history import history
 from routes.keycloak import keycloak
+from routes.bookmark import bookmark
 from fastapi.middleware.cors import CORSMiddleware
-from routes.auth import get_auth
 
 app = FastAPI()
 
@@ -16,5 +16,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(history, dependencies=[Depends(get_auth)])
+app.include_router(bookmark)
+app.include_router(history)
 app.include_router(keycloak)

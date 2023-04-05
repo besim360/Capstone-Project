@@ -3,6 +3,11 @@ from pydoc import doc
 from pydantic import BaseModel
 from typing import List,Dict
 
+class Subject(BaseModel):
+    subjectCode: str
+    generalTopic: str
+    topics: str
+
 class Document(BaseModel):
     id : str
     title : str
@@ -14,8 +19,7 @@ class Document(BaseModel):
     startYear : str
     endYear : str
     pages : str
-    subjectCodes : str
-    topics : str
+    subjects: List[Subject]
     doi : str
 
 class History(BaseModel):

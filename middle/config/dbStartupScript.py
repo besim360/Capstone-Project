@@ -7,12 +7,12 @@ import mongoUtil
 #       - "User Bookmarks"
 
 DB = mongoUtil.db_cluster("mongodb://localhost:2717")
-DB.create_db("Capstone")
-DB.create_collection("Capstone","History")
-DB.set_database("Capstone")
+DB.create_db("TechCommSearch")
+DB.create_collection("TechCommSearch","History")
+DB.set_database("TechCommSearch")
 DB.set_collection("History")
-DB.insert_one_entry(11,"intial config",None)
-DB.create_collection("Capstone","Bookmarks")
+DB.create_collection("TechCommSearch","Bookmarks")
 DB.set_collection("Bookmarks")
-DB.insert_one_entry(11,"intial config",None)
+DB.create_collection("TechCommSearch","Bibliographies")
+DB.set_collection("Bibliographies")
 print("Database Initialized")
