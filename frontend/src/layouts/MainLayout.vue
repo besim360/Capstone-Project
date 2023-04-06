@@ -27,30 +27,38 @@
         </q-item-section>
         <q-item-section class="text-white text-subtitle1"> Bookmarks </q-item-section>
       </q-item>
-      <div class="row" v-for="n in 1" :key="n" style="justify-content: center;">
-        <div style="max-width: 370px;  max-height: 350px;">
+      <div v-if="folders.length === 0" style="margin-top: 20px; margin-bottom: 20px;">
+        <div class="row" style="justify-content: center; padding: 5px;">
+          <p>Oh no!</p>
+          <p>It appears that you have no bookmarks.</p>
+        </div>
+      </div>
+      <div v-else class="row" v-for="folder in store.bookmarks.value.bookmarkFolders" :key="folder.id">
+        <div style="max-width: 370px;  max-height: 350px; width: 100%">
           <q-list>
             <q-expansion-item
               class="text-subtitle2 text-black"
               expand-separator
               icon="folder"
-              label="Business and management"
+              :label="folder.label"
             >
-              <q-card>
-                  <div class="row" v-for="n in 2" :key="n" style="justify-content: center;">
-                    <q-item class="">
+              <q-card v-if="folder.bookmarks.length > 0">
+                  <div class="row" v-for="bookmark in folder.bookmarks" :key="bookmark.id" style="justify-content: center;">
+                    <q-item style="align-items: center; padding: 0">
                       <q-icon color="black" name="folder" class="q-pa-sm"/>
-                      <q-item-section avatar class="text-blue text-subtitle2"> The Case for "Living" Models </q-item-section>
+                      <q-item-section avatar class="text-blue text-subtitle2"> {{reduceBookmarkLength(bookmark.label)  }} </q-item-section>
+                      <q-icon color="black" name="delete" class="q-pa-md" style="cursor: pointer;" @click="() => {deleteBookmarkClick(folder.id, bookmark.id)}"/>
                     </q-item>
                   </div>
               </q-card>
-            </q-expansion-item>
-            <q-expansion-item
-              class="text-subtitle2 text-black"
-              expand-separator
-              icon="folder"
-              label="Technology"
-            >
+              <q-card v-else>
+                <div class="row" style="justify-content: center;">
+                  <q-item-section style="padding-left: 20px; padding-right: 20px; text-align: center">
+                    <p>Oh no!</p>
+                    <p>It seems you don't have a bookmark in this folder</p>
+                  </q-item-section>
+                </div>
+              </q-card>
             </q-expansion-item>
           </q-list>
         </div>
@@ -67,7 +75,6 @@
     <div v-if="userStore.searchHistory.length > 0" style="height: 50%;">
       <div class="row" v-for="record in userStore.searchHistory" :key="record.id">
         <q-item style="padding-right: 10px; padding-left: 10px; flex: 1;">
-          <!-- <q-icon color="black" name="saved_search" class="q-pa-sm"/> -->
           <q-btn color="blue" flat push @click="() => {historyClick(record)}" style="padding-left: 0; padding-right: 0; flex: 1;">{{ reduceQueryLength(record.query) }}</q-btn>
           <q-btn round flat icon="delete" color="blue" style="margin-left: auto;" @click="() => {deleteHistoryClick(record)}"></q-btn>
         </q-item>
@@ -94,12 +101,15 @@ import { computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router';
 import { HistoryRecord } from 'src/api/models/history';
 import { useSearchStore } from 'src/stores/search';
+import { storeToRefs } from 'pinia';
 import { SearchRecord } from 'src/api/models/search';
 import GlobalDialog from 'src/components/GlobalDialog.vue';
 
 const router = useRouter();
 const userStore = useUserStore();
 const searchStore = useSearchStore();
+
+const store = storeToRefs(userStore)
 
 const blank = ref({} as SearchRecord)
 const userapi: AxiosInstance = inject('userapi') as AxiosInstance;
@@ -114,7 +124,16 @@ onMounted( async () => {
   if (userStore.loggedIn) {
     const userID = await AuthService.AuthWrapper.User.auth_id;
     const userHistory = await userapi.get('/history/'+userID)
+    const userBookmarks = await userapi.get('/bookmarks/'+userID)
+    if(userBookmarks.data.length === 0) {
+      let baseData = {
+        uid: userID,
+        bookmarkFolders: []
+      }
+      await userapi.post('/bookmarks/base/'+userID, baseData)
+    }
     userStore.setSearchHistory(userHistory.data)
+    userStore.setBookmarks(userBookmarks.data)
   }
 })
 
@@ -131,6 +150,11 @@ const deleteHistoryClick = async (searchHistory: HistoryRecord) => {
   userStore.setSearchHistory(userHistory.data)
 }
 
+const deleteBookmarkClick = async (folderId: string, recordId: string) => {
+  const userBookmarks = await userapi.delete(`/bookmarks/bookmark/${recordId}/${folderId}/${userStore.user.auth_id}`)
+  userStore.setBookmarks(userBookmarks.data[0])
+}
+
 const reduceQueryLength = (queryText: string) => {
   let qtextshort
   if(queryText.length > 20){
@@ -141,6 +165,25 @@ const reduceQueryLength = (queryText: string) => {
   }
   return qtextshort
 }
+
+const reduceBookmarkLength = (bmText: string) => {
+  let bmTextshort
+  if(bmText.length > 16){
+    bmTextshort = bmText.substring(0, 16)
+    bmTextshort = bmTextshort + '...'
+  } else {
+    bmTextshort = bmText
+  }
+  return bmTextshort
+}
+
+const folders = computed(() => {
+  if(store.bookmarks.value.bookmarkFolders){
+    return store.bookmarks.value.bookmarkFolders
+  } else {
+    return []
+  }
+})
 
 const isAdmin = computed(() => {
   return AuthService.AuthWrapper.HasRole('RealmAdmin');

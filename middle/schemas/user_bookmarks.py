@@ -30,7 +30,6 @@ def bookmarkEntity(item) -> Dict:
         subjects = flatten_subjects(item["subjects"])
     else:
         subjects = []
-    print(item)
     return {
         "id" : str(item["_id"]),
         "label": str(item["label"]),

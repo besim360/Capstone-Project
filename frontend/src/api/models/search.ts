@@ -1,3 +1,9 @@
+export type Subject = {
+  subjectCode: string,
+  generalTopic: string,
+  topics: string,
+}
+
 export type SearchRecord = {
   id: string,
   title: string,
@@ -9,8 +15,7 @@ export type SearchRecord = {
   startYear: string,
   endYear: string,
   pages: string,
-  subjectCodes: string,
-  topics: string,
+  subjects: Array<Subject>
   doi: string,
 }
 

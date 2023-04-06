@@ -21,7 +21,7 @@ import java.util.List;
  */
 @Slf4j
 @RestController
-@CrossOrigin(origins = "http://localhost:9000/")
+@CrossOrigin(origins = "http://localhost:9000/", allowedHeaders = "*")
 @RequestMapping("/article")
 public class ArticleController {
     @Autowired

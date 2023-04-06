@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia';
+import { Bookmark } from 'src/api/models/bookmark';
 import { SearchRecord } from 'src/api/models/search';
 export interface Author {
   id: number;
@@ -20,7 +21,7 @@ export interface AddFolderForm {
   folderName: string,
 }
 export interface AddBookmarkForm {
-  folderName: string,
+  folder: Bookmark
   bookmarkName: string,
   record: SearchRecord,
 }
@@ -74,6 +75,7 @@ export const useDialogStore = defineStore('dialog', {
       this.fAddBookmarkOptions = {
         folderName: '',
         bookmarkName: '',
+        folder: {} as Bookmark,
         record: {} as SearchRecord
       } as dialogFormMeta['AddBookmark']
     },
