@@ -125,7 +125,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import html2pdf from 'html2pdf.js';
-import {BibliographyElement, sampleBibliography} from '../api/models/bibliography'
+import {BibliographyElement, sampleBibliography} from '../api/models/bibliography_old_old'
 type ExportType = {
   _id: number;
   name: string;
