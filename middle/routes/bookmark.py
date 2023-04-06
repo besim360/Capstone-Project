@@ -7,49 +7,53 @@ from schemas.user_bookmarks import request_handler
 from pydantic import Json
 from routes.auth import get_auth
 
-bookmark = APIRouter()
+bookmarks = APIRouter()
 
 """
-    Gets a list of bookmarks for a user
+    Utitily function that checks that the passed in UID matches the keycloak token identity
 """
-@bookmark.get('/bookmark/{uid}')
-async def get_user_bookmarks(uid, identity: Json = Depends(get_auth)):
+def check_auth(uid, identity: Json):
     if(identity['sub'] != uid):
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail='user id does not match token',
             headers={"WWW-Authenticate": "Bearer"}
         )
-    return request_handler(mongo_conn.TechCommSearch.Bookmarks.find({"uid":uid}))[0]
 
+"""
+    Gets a list of bookmarks for a user
+"""
+@bookmarks.get('/bookmarks/{uid}')
+async def get_user_bookmarks(uid, identity: Json = Depends(get_auth)):
+    check_auth(uid, identity)
+    req = request_handler(mongo_conn.TechCommSearch.Bookmarks.find({"uid":uid}))
+    isRecord = len(req) > 0
+    if isRecord: return req[0]
+    return []
 
 """
     Creates a new base bookmarks object with no bookmarks for a user
 """
-# TODO: Reimplement auth
-@bookmark.post('/bookmark/create/{uid}')
-async def create_user_bookmarks(uid):
-    # , identity: Json = Depends(get_auth)
-    # if(identity['sub'] != uid):
-    #     raise HTTPException(
-    #         status_code=status.HTTP_401_UNAUTHORIZED,
-    #         detail='user id does not match token',
-    #         headers={"WWW-Authenticate": "Bearer"}
-    #     )
+@bookmarks.post('/bookmarks/base/{uid}')
+async def create_user_bookmarks(uid, identity: Json = Depends(get_auth)):
+    check_auth(uid, identity)
     bm = mongo_conn.TechCommSearch.Bookmarks.find({"uid":uid})
     user_bookmarks = list(bm)
     if len(user_bookmarks) == 0:
         t = {"uid": uid, "bookmarkFolders": []}
         mongo_conn.TechCommSearch.Bookmarks.insert_one(t)
-    return request_handler(mongo_conn.TechCommSearch.Bookmarks.find({"uid":uid}))[0]
+    req = request_handler(mongo_conn.TechCommSearch.Bookmarks.find({"uid":uid}))
+    isRecord = len(req) > 0
+    if isRecord: return req[0]
+    
+    return []
 
-
-# TODO: Implement auth
 """
     Create a folder in a users bookmark folders
 """
-@bookmark.post('/bookmark/create/folder/{uid}')
-async def create_new_folder(uid, folder: FolderRequestModel):
+@bookmarks.post('/bookmarks/folder/{uid}')
+async def create_new_folder(uid, folder: FolderRequestModel, identity: Json = Depends(get_auth)):
+    check_auth(uid, identity)
     t = folder.dict()
     t["_id"] = ObjectId()
     bm = mongo_conn.TechCommSearch.Bookmarks.find({"uid":uid})
@@ -66,12 +70,12 @@ async def create_new_folder(uid, folder: FolderRequestModel):
     )
     return request_handler(mongo_conn.TechCommSearch.Bookmarks.find({"uid":uid}))[0]
 
-# TODO: Implement auth
 """
     Create a bookmark in a users folder
 """
-@bookmark.post('/bookmark/create/bookmark/folder/{fid}/{uid}')
-async def create_new_bookmark(uid, fid, bookmark: BookmarkRequestModel):
+@bookmarks.post('/bookmarks/bookmark/folder/{fid}/{uid}')
+async def create_new_bookmark(uid, fid, bookmark: BookmarkRequestModel, identity: Json = Depends(get_auth)):
+    check_auth(uid, identity)
     t = bookmark.dict()
     t["_id"] = ObjectId()
     bm = mongo_conn.TechCommSearch.Bookmarks.find({"uid":uid})
@@ -98,12 +102,12 @@ async def create_new_bookmark(uid, fid, bookmark: BookmarkRequestModel):
         )
     return request_handler(mongo_conn.TechCommSearch.Bookmarks.find({"uid":uid}))[0]
 
-# TODO: Implement auth
 """
     Update a bookmark in a users folder
 """
-@bookmark.put('/bookmark/{fid}/{uid}')
-async def update_bookmark(uid, fid, bookmark: BookmarkResponseModel):
+@bookmarks.put('/bookmarks/bookmark/folder/{fid}/{uid}')
+async def update_bookmark(uid, fid, bookmark: BookmarkResponseModel, identity: Json = Depends(get_auth)):
+    check_auth(uid, identity)
     t = bookmark.dict()
 
     bm = mongo_conn.TechCommSearch.Bookmarks.find({"uid": uid})
@@ -124,9 +128,7 @@ async def update_bookmark(uid, fid, bookmark: BookmarkResponseModel):
             headers={"WWW-Authenticate": "Bearer"}
         )
     
-    
     bookmark = list(filter(lambda x: x["id"] == bookmark.id, folder[0]['bookmarks']))
-    
     bookmarkExists = len(bookmark)
     if not bookmarkExists:
         raise HTTPException(
@@ -157,13 +159,12 @@ async def update_bookmark(uid, fid, bookmark: BookmarkResponseModel):
     )
     return request_handler(mongo_conn.TechCommSearch.Bookmarks.find({"uid":uid}))
 
-
-# TODO: Implement auth
 """
     Delete a bookmark in a users folder
 """
-@bookmark.delete('/bookmark/{bid}/{fid}/{uid}')
-async def delete_bookmark(uid, fid, bid):
+@bookmarks.delete('/bookmarks/bookmark/{bid}/{fid}/{uid}')
+async def delete_bookmark(uid, fid, bid, identity: Json = Depends(get_auth)):
+    check_auth(uid, identity)
     bm = mongo_conn.TechCommSearch.Bookmarks.find({"uid": uid})
     flattened_request = request_handler(bm)
     if len(flattened_request) == 0:
@@ -199,6 +200,37 @@ async def delete_bookmark(uid, fid, bid):
         array_filters=[
             {"folder._id": ObjectId(fid)}
         ]
+    )
+    return request_handler(mongo_conn.TechCommSearch.Bookmarks.find({"uid":uid}))
+
+"""
+    Delete a folder
+"""
+@bookmarks.delete('/bookmarks/folder/{fid}/{uid}')
+async def delete_folder(uid, fid, identity: Json = Depends(get_auth)):
+    check_auth(uid, identity)
+    bm = mongo_conn.TechCommSearch.Bookmarks.find({"uid": uid})
+    flattened_request = request_handler(bm)
+    if len(flattened_request) == 0:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User does not have associated bookmarks object',
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    folders = flattened_request[0]["bookmarkFolders"]
+    folder = list(filter(lambda x: x["id"] == fid, folders))
+    folderExists = len(folder) > 0
+    if not folderExists:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Folder does not exist',
+            headers={"WWW-Authenticate": "Bearer"}
+        )
+    mongo_conn.TechCommSearch.Bookmarks.update_one(
+        { "_id": ObjectId(flattened_request[0]['id'])},
+        { '$pull': {
+            'bookmarkFolders': {"_id": ObjectId(fid)},
+        }},
     )
     return request_handler(mongo_conn.TechCommSearch.Bookmarks.find({"uid":uid}))
 

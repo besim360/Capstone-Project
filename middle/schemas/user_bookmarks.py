@@ -46,9 +46,14 @@ def bookmarkEntity(item) -> Dict:
         "subjects": subjects,
     }
 
-
 def request_handler(entity) -> list:
-    return[userBookmarksEntity(item) for item in entity]
+    # -- Have to do this since the entity is a cursor it will be consumed on first call so copy it to a list first then do stuff.
+    entity = list(entity)
+    isEntity = len(entity) > 0
+    if isEntity == True:
+        return[userBookmarksEntity(item) for item in entity]
+    else:
+        return []
 
 def subjectEntity(item) -> Dict:
     return {
