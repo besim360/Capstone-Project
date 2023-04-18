@@ -21,7 +21,9 @@ import java.util.*;
 
 
 /**
- * The business layer
+ * The business layer that handles all requests to the articleRepository,
+ * requires a reference to subjectService because certain transactions need
+ * to add and remove subjects to articles and work with the subjectRepository
  */
 @Service
 @Slf4j
@@ -37,7 +39,6 @@ public class ArticleService {
 
     private static final List<String> SEARCHABLE_FIELDS = Arrays.asList("title", "authors", "sourceLong",
             "subjects.topics", "doi", "sourceAbbrev", "subjects.subjectCode", "subjects.generalTopic", "fullText");
-    //private static final List<String> NUMERIC_FIELDS = Arrays.asList("subjects.subjectCode", "startYear", "endYear");
 
     public ArticleService(@NonNull ArticleRepository articleRepository) {
         this.articleRepository = articleRepository;

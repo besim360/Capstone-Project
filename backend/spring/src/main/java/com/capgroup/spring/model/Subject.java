@@ -8,17 +8,19 @@ import org.hibernate.search.engine.backend.types.Searchable;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+
+/**
+ * Subject entity that will be embedded into articles for categorization purposes
+ */
 
 @Entity
 @Getter
 @Setter
 @ToString
 @Transactional
-//@Indexed(index = "SubjectIndex")
 @Table(name = "subjects")
 public class Subject {
 

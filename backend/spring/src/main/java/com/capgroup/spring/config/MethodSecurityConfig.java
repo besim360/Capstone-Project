@@ -11,7 +11,7 @@ import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper
 /**
  * Enables security annotations via like {@link org.springframework.security.access.prepost.PreAuthorize} and
  * {@link org.springframework.security.access.prepost.PostAuthorize} annotations per-method.
- * NOTE: taken from https://github.com/thomasdarimont/keycloak-project-example
+ * NOTE: taken from https://github.com/thomasdarimont/keycloak-project-example and currently unused
  */
 @Configuration
 @RequiredArgsConstructor
