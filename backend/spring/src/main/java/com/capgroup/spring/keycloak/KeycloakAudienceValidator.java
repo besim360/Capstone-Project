@@ -8,7 +8,8 @@ import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Component;
 
 /**
- * Example class for custom audience (aud) or authorized party (azp) claim validations. NOTE: taken from https://github.com/thomasdarimont/keycloak-project-example
+ * Class for custom audience (aud) or authorized party (azp) claim validations.
+ * NOTE: taken from https://github.com/thomasdarimont/keycloak-project-example
  */
 @Component
 @RequiredArgsConstructor

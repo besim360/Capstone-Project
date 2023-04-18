@@ -17,7 +17,9 @@ import java.util.*;
 
 
 /**
- * Our main entity being stored in Hibernate, contains all the data related to a specific article to be stored in the database */
+ * Our main entity being stored in Hibernate, contains all the data related to a
+ * specific article to be stored in the database
+ */
 @Entity
 @Indexed
 @Table(name = "article")
@@ -27,12 +29,6 @@ import java.util.*;
 @Transactional
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Article {
-
-
-    /*public Article(String title, String authors) {
-        this.title = title;
-        this.authors = authors;
-    }*/
 
     public Article() {
     }
