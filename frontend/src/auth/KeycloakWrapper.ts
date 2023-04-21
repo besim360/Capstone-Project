@@ -61,7 +61,7 @@ export default class KeycloakWrapper implements AuthWrapper {
     this.keycloak = Keycloak(kc_config);
 
     if (!this.keycloak)
-      throw 'Qiksar Initialisation Error: Keycloak did not initialise';
+      throw 'Initialisation Error: Keycloak did not initialise';
   }
 
   //#region getters

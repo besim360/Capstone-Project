@@ -125,7 +125,7 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import html2pdf from 'html2pdf.js';
-import {BibliographyElement, sampleBibliography} from '../api/models/bibliography'
+import {BibliographyElement, sampleBibliography} from '../api/models/bibliography_old'
 type ExportType = {
   _id: number;
   name: string;
@@ -136,7 +136,7 @@ type ExportType = {
 const defaultTypes: Array<ExportType> = [
   {_id: 0, name: 'Chicago/Turbian', label: 'Chicago', value: 'Chicago'},
   {_id: 1, name: 'Modern Langauge Association', label: 'MLA', value: 'MLA'},
-  {_id: 2, name: 'American Psychological Association', label: 'APA', value: 'APA'}
+  // {_id: 2, name: 'American Psychological Association', label: 'APA', value: 'APA'}
 ];
 
 const exportType = ref(defaultTypes[0]);

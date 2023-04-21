@@ -7,7 +7,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
- * Example for generic custom access checks on request level.
+ * Generic custom access check on request level.
  * NOTE: taken from https://github.com/thomasdarimont/keycloak-project-example
  */
 @Slf4j

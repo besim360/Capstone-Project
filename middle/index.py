@@ -1,6 +1,8 @@
 from fastapi import FastAPI
 from routes.history import history
 from routes.keycloak import keycloak
+from routes.bookmark import bookmarks
+from routes.bibliography import bibliographies
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -15,5 +17,8 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+app.include_router(bibliographies)
+app.include_router(bookmarks)
 app.include_router(history)
 app.include_router(keycloak)

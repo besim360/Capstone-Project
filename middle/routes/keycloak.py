@@ -11,7 +11,7 @@ realm="wsutcsr"
 #Authenticate the user with username and password, and receive their bearer token.
 @keycloak.post("/authenticate-user/")
 def authenticateUser (email : str, password : str):
-    request = httpx.post("http://localhost:8080/realms/cs420/protocol/openid-connect/token", 
+    request = httpx.post(f"http://localhost:8080/realms/{realm}/protocol/openid-connect/token", 
     data={'username' : email, 
         'password' : password, 
         'grant_type' : 'password', 
@@ -25,7 +25,6 @@ def authenticateUser (email : str, password : str):
     #decoded_bearer_token["sub"]
     
     return data
-
 
 #Retrieve all current users.
 @keycloak.get("/retrieve-all-users/")

@@ -1,6 +1,7 @@
 import { defineStore } from 'pinia';
 import User from './user';
 import { SearchHistory } from 'src/api/models/history';
+import { UserBookmarks } from 'src/api/models/bookmark';
 
 /**
  * Provide a store to manage the state of the user profile
@@ -14,7 +15,12 @@ const useUserStore = defineStore('user', {
     return {
       loggedIn: false,
       user: <User>{},
-      searchHistory: {} as SearchHistory
+      searchHistory: {} as SearchHistory,
+      bookmarks: {
+        id: '',
+        uid: '',
+        bookmarkFolders: [],
+      } as UserBookmarks,
     };
   },
   // optional getters
@@ -44,11 +50,15 @@ const useUserStore = defineStore('user', {
     setSearchHistory(searchHistory: SearchHistory) {
       let history = [] as SearchHistory
       if(searchHistory.length > 1){
-        history = searchHistory.sort((a,b) => new Date(a.queryDate).getTime() - new Date(b.queryDate).getTime())
+        history = searchHistory.sort((a,b) => new Date(b.queryDate).getTime() - new Date(a.queryDate).getTime())
       } else {
         history = searchHistory
       }
       this.searchHistory = history
+    },
+
+    setBookmarks(bookmarks: UserBookmarks) {
+      this.bookmarks = bookmarks
     }
   },
 });
