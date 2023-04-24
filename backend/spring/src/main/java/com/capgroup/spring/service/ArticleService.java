@@ -188,25 +188,22 @@ public class ArticleService {
     }
 
 
-
-    /*
-
-    This is the version that splits text, boolOps and fields into separate lists
-    public List<Article> boolSearchArticles(List<String> text, List<String> boolOps, List<String> fields, int limit){
-
-        List<String> fieldsToSearchBy = fields.isEmpty() ? SEARCHABLE_FIELDS : fields;
-
-
-        boolean containsInvalidField = fields.stream(). anyMatch(f -> !SEARCHABLE_FIELDS.contains(f));
-        if (containsInvalidField){
-            throw new IllegalArgumentException();
-        }
-
-        return articleRepository.boolSearchBy(text, boolOps, fieldsToSearchBy, limit);
-    }*/
-
-
-
+    /**
+     *
+     * Interacts with the article repository to request a boolean or advanced search with the given parameters. Each clause
+     * or sub-query should have at least three attributes: the term (which is given in the query parameter), the
+     * boolean operator and the field. A clause of the total boolean search will correspond to an index of these Lists.
+     * So, a clause's query, boolean operator, and field will all be in index i of given lists. Therefore, all Lists
+     * should be the same length.
+     *
+     * @param query a list of Strings that are the actual terms being searched for
+     * @param operators the boolean operators being applied to those searches (AND, OR, NOT)
+     * @param fields the attributes of the article that the search will look at for the queries (authors, topics, etc.)
+     * @param startYear the earliest year that the returned articles should be published in (null if no such parameter)
+     * @param endYear the latest year that the returned articles should be published in (null if no such parameter)
+     * @param limit the maximum number of articles that should be returned.
+     * @return a List of articles
+     */
     @Transactional(readOnly = true)
     public List<Article> boolSearchArticles(List<String> query, List<String> operators, List<String> fields,
                                             Integer startYear, Integer endYear, Integer limit) {

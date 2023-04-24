@@ -178,11 +178,11 @@ public class ArticleController {
     }
 
     /**
-     * General search for articles
+     * Handles requests for general searches of articles
      * @param text content that is being searched
      * @param fields fields to search, if none will search titles, authors, sourceAbbrev, sourceLong, subjects.topics,
      *               doi, subjects.subjectCode, subjects.generalTopic, fullText
-     * @param limit number of results to return
+     * @param limit maximum number of results to return
      * @return json array of articles
      */
     @GetMapping("/search")
@@ -201,6 +201,20 @@ public class ArticleController {
     }
 
 
+    /**
+     * Receives and handles boolean search requests. Calls on ArticleService to handle these requests to return a List
+     * of articles that match the provided search parameters.
+     *
+     * Example URL: http://localhost:9001/article/bool?query=writing,nielsen,writing&operators=or,or,or&fields=title,authors,subjects.topics&startYear=2015&endYear=2020&limit=20
+     *
+     * @param query the list of keyword terms to search
+     * @param operators the boolean operators applied to each clause of the search
+     * @param fields the fields to search
+     * @param startYear all returned articles must be published in or after this year (not required)
+     * @param endYear all returned articles must be published in or before this year (not required)
+     * @param limit number of articles returned should not exceed limit
+     * @return a json array of articles that match all clauses of the boolean search with the given parameters
+     */
     @GetMapping("/bool")
     public List<Article> boolSearchArticles(@RequestParam(value = "query", required = true) List<String> query,
                                             @RequestParam(value = "operators", required = true) List<String> operators,

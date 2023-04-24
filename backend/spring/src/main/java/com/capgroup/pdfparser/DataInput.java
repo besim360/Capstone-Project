@@ -14,7 +14,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.*;
 
-
+/**
+ * Class handles data input from Excel and pdf sources provided in the dropbox by Murphy.
+ * This class is only necessary for completely rebuilding the database from source data
+ */
 
 @Component
 public class DataInput {
@@ -30,7 +33,8 @@ public class DataInput {
      * @throws IOException problems with file parsing may occur
      */
     @Transactional
-    public static ArrayList<Article> enterData(String pathToMain, String pathToSources, Map<String, Subject> subjectMap, String pathToTexts) throws IOException {
+    public static ArrayList<Article> enterData(String pathToMain, String pathToSources, Map<String, Subject> subjectMap,
+                                               String pathToTexts) throws IOException {
 
         HashMap<String, String> sourceMap = createMapFromSheet(pathToSources, 63, 1, 0);
         //HashMap<String, String> subjectMap = createMapFromSheet(pathToSubjects, 582, 2, 0);
@@ -134,6 +138,13 @@ public class DataInput {
         }
         return articles;
     }
+
+    /**
+     * creates a map that pairs subject codes to the subject
+     * @param pathToSubjects path to the subject source Excel file
+     * @return a map with key: code value: subject
+     * @throws IOException
+     */
     public static Map<String, Subject> getSubjects(String pathToSubjects) throws IOException{
 
         FileInputStream file = new FileInputStream(new File(pathToSubjects));
@@ -169,21 +180,6 @@ public class DataInput {
         return map.get(abbrev);
     }
 
-    /*private static String codeToTopic(String[] codes, HashMap<String, String> map){
-
-        String topics = "";
-        for (String code : codes){
-            String value = map.get(code);
-            if (value != null){
-                topics = topics + ", " + value;
-            }
-        }
-        if (topics.contains(", ")) {
-            return topics.substring(2);
-        }
-        return topics;
-
-    }*/
 
     /**
      * Creates a HashMap from an Excel file where the keys of the map are the values from a specified column and the
