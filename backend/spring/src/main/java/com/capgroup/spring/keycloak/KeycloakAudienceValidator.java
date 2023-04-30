@@ -9,7 +9,6 @@ import org.springframework.stereotype.Component;
 
 /**
  * Class for custom audience (aud) or authorized party (azp) claim validations.
- * NOTE: taken from https://github.com/thomasdarimont/keycloak-project-example
  */
 @Component
 @RequiredArgsConstructor

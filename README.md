@@ -52,4 +52,7 @@ uvicorn index:app --reload
 - Open project in IntelliJ or install Maven
 - Download dependencies through Maven
 - Either download PDFs and database through Murphy's Dropbox or get them through the discord and extract them to your backend/spring/ directory
+- If building database index from scratch, uncomment the two beans in Application.java
+- If database index is already present, ensure it is not rebuilt as it is currently additive and leaving the beans uncommented can double the size of the database every time
 - Run spring-boot:run command through IntelliJ or Maven
+- NOTE: IntelliJ is preconfigured for JDK version 19.0, although later versions should not have any issues

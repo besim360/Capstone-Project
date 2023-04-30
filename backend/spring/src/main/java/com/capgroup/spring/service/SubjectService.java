@@ -25,9 +25,20 @@ public class SubjectService {
     public SubjectService(SubjectRepository subjectRepository) {
         this.subjectRepository = subjectRepository;
     }
+
+    /**
+     * Deletes subject by ID
+     * @param subjectCode ID of subject being deleted
+     */
     @Transactional(readOnly = false)
     public void deleteSubject(String subjectCode) {subjectRepository.deleteById(subjectCode);}
 
+    /**
+     * Add new subject entity, assumes subject ID does not exist
+     * @param subjectCode ID of subject in string form.
+     * @param generalTopic General topic of subjects.
+     * @param topics Topics associated with subject
+     */
     @Transactional(readOnly = false)
     public void addSubject(String subjectCode, String generalTopic, String topics){
         Subject subject = new Subject();
@@ -37,6 +48,12 @@ public class SubjectService {
         subjectRepository.save(subject);
     }
 
+    /**
+     * Update existing subject entity, assumes subject exists
+     * @param subjectCode ID of subject in string form.
+     * @param generalTopic General topic of subjects.
+     * @param topics Topics associated with subject
+     */
     @Transactional(readOnly = false)
     public void updateSubject(String subjectCode, String generalTopic, String topics){
         var subject = subjectRepository.getReferenceById(subjectCode);
@@ -49,18 +66,27 @@ public class SubjectService {
         }
     }
 
+    /**
+     * Returns all subject entities
+     * @return A list of all subject entities to be sent to the frontend in json form
+     */
     @Transactional(readOnly = true)
     public List<Subject> getAllSubjects(){
-        List<Subject> test = new ArrayList<>();
+        List<Subject> subjects = new ArrayList<>();
         try {
-            test = subjectRepository.findAll();
+            subjects = subjectRepository.findAll();
         }
         catch (NullPointerException e){
             log.info("ERROR: {}", e.getMessage());
         }
-        return test;
+        return subjects;
     }
 
+    /**
+     * Gets all subject entities from a list, will log invalid subject codes from list
+     * @param subjectCodes List of subject codes in string format
+     * @return List of subject entities
+     */
     @Transactional(readOnly = true)
     public List<Subject> getSubjects(List<String> subjectCodes){
         List<Subject> subjList = new ArrayList<>();

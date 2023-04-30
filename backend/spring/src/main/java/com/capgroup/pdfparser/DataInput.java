@@ -37,8 +37,6 @@ public class DataInput {
                                                String pathToTexts) throws IOException {
 
         HashMap<String, String> sourceMap = createMapFromSheet(pathToSources, 63, 1, 0);
-        //HashMap<String, String> subjectMap = createMapFromSheet(pathToSubjects, 582, 2, 0);
-
         FileInputStream file = new FileInputStream(new File(pathToMain));
         Workbook workbook = new XSSFWorkbook(file);
 
@@ -143,7 +141,7 @@ public class DataInput {
      * creates a map that pairs subject codes to the subject
      * @param pathToSubjects path to the subject source Excel file
      * @return a map with key: code value: subject
-     * @throws IOException
+     * @throws IOException on failure
      */
     public static Map<String, Subject> getSubjects(String pathToSubjects) throws IOException{
 
@@ -156,7 +154,7 @@ public class DataInput {
                 continue;
             }
             Subject subject = new Subject();
-            //assuming subjectTopic,subjectGenTopic, subjectCode all mandatory
+            // assuming subjectTopic,subjectGenTopic, subjectCode all mandatory
             var subjectTopic = row.getCell(0);
             var subjectGenTopic = row.getCell(1);
             var subjectCode = row.getCell(2);
@@ -167,7 +165,8 @@ public class DataInput {
             subject.setSubjectCode(subjectCode.getStringCellValue());
             var genTopicString = subjectGenTopic.getStringCellValue();
             var topicString = subjectTopic.getStringCellValue();
-            genTopicString = genTopicString.replaceAll("\\p{Punct}", "");
+            // genTopicString replacement may be unnecessary if general topic is always one topic
+            // genTopicString = genTopicString.replaceAll("\\p{Punct}", "");
             topicString = topicString.replaceAll("\\p{Punct}", "");
             subject.setTopics(topicString);
             subject.setGeneralTopic(genTopicString);
@@ -190,7 +189,7 @@ public class DataInput {
      * @param valueCol the value's column number
      * @return a HashMap with storing representing all rows in the provided Excel file with a key-value pair based on
      *          the provided keyCol and valueCol
-     * @throws IOException
+     * @throws IOException on failure
      */
     private static HashMap<String, String> createMapFromSheet(String sheetLocation, int initialCapacity, int keyCol, int valueCol) throws IOException {
 

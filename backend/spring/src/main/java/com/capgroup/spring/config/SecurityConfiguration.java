@@ -20,8 +20,6 @@ import org.springframework.security.web.SecurityFilterChain;
  */
 @Configuration
 @RequiredArgsConstructor
-//@EnableWebSecurity
-//@EnableGlobalMethodSecurity(prePostEnabled=true)
 public class SecurityConfiguration{
     private final KeycloakJwtAuthenticationConverter keycloakJwtAuthenticationConverter;
 
