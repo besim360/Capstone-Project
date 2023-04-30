@@ -94,7 +94,7 @@ public class ArticleController {
      * @param subjectCodesToRemove a list of subject codes to be removed from the article
      * @param doi the new doi of the article
      * @param file a new file to be parsed for full text search on the article
-     * @return
+     * @return status code of success or failure
      */
     @PutMapping("/admin/updateArticle/{articleId}")
     public ResponseEntity<String> updateArticle(@NotNull @PathVariable Long articleId,
@@ -132,12 +132,14 @@ public class ArticleController {
      * Add subject to repository to be later associated with articles
      * @param subjectCode the primary key of the subject, is defined by the user and must be unique
      * @param generalTopic the general topic of the subject
-     * @param topics all topics associated with the subject, separated by spaces (need to check if pdfmain tokenization is correctly set up)
+     * @param topics all topics associated with the subject, separated by commas (as of current iteration of database)
      */
     @PostMapping("/admin/addSubject")
     public void addSubject(@RequestParam(value = "subjectCode", required = true) String subjectCode,
                                              @RequestParam(value = "generalTopic", required = true) String generalTopic,
                                              @RequestParam(value = "topics", required = true) String topics){
+        // strip out commas from topics for indexing purposes
+        topics = topics.replaceAll("\\p{Punct}", "");
         log.info("Request for subject addition: [{},{},{}]", subjectCode, generalTopic, topics);
         this.subjectService.addSubject(subjectCode, generalTopic, topics);
     }
@@ -152,6 +154,10 @@ public class ArticleController {
     public void updateSubject(@RequestParam(value = "subjectCode", required = true) String subjectCode,
                            @RequestParam(value = "generalTopic", required = false) String generalTopic,
                            @RequestParam(value = "topics", required = false) String topics){
+        if (topics != null) {
+            // strip out commas from topics for indexing purposes
+            topics = topics.replaceAll("\\p{Punct}", "");
+        }
         log.info("Request for subject updating: [{},{},{}]", subjectCode, generalTopic, topics);
         this.subjectService.updateSubject(subjectCode, generalTopic, topics);
     }

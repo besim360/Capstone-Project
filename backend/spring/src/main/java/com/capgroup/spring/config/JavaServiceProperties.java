@@ -19,7 +19,6 @@ public class JavaServiceProperties {
     /**
      * Specifies JWT client ID, issuer URI and allowed audiences
      * for validation
-     * NOTE: taken from https://github.com/thomasdarimont/keycloak-project-example
      */
     @Getter
     @Setter

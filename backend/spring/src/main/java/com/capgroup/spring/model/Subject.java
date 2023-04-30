@@ -36,6 +36,9 @@ public class Subject {
 
     @FullTextField
     @Column(name = "topics", columnDefinition = "VARCHAR(2048)")
+    // NOTE: Topics could be stored in the future as a list of strings rather than a single string so that the
+    // formatted output can demarcate different topics, if so, the way topics are parsed must be changed in both
+    // DataInput's getSubjects() method and any methods that manipulate subjects in ArticleController
     private String topics;
 
     @ManyToMany(mappedBy = "subjects", fetch = FetchType.LAZY,
