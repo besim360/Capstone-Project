@@ -12,6 +12,9 @@ import org.apache.pdfbox.text.PDFTextStripper;
 public class PDFMain {
     /**
      * Parses PDF and returns all text in string format, make sure to wrap any calls of this function with a try and except
+     * @param pdfFile File that will be parsed
+     * @return entire file in a single string
+     * @throws IOException when document fails to be parsed
      */
     public static String parseFile(File pdfFile) throws IOException {
         PDDocument doc = PDDocument.load(pdfFile);
@@ -21,6 +24,12 @@ public class PDFMain {
         doc.close();
         return text;
     }
+    /**
+     * Parses PDF and returns all text in string format, make sure to wrap any calls of this function with a try and except
+     * @param pdfFile InputStream that will be parsed
+     * @return entire file in a single string
+     * @throws IOException when document fails to be parsed
+     */
     public static String parseFile(InputStream pdfFile) throws IOException {
         PDDocument doc = PDDocument.load(pdfFile);
         var stripper = new PDFTextStripper();
