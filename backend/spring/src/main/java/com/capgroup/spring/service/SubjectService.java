@@ -22,6 +22,10 @@ public class SubjectService {
     @Autowired
     private  SubjectRepository subjectRepository;
 
+    /**
+     * Constructor for SubjectService
+     * @param subjectRepository repository for subjects
+     */
     public SubjectService(SubjectRepository subjectRepository) {
         this.subjectRepository = subjectRepository;
     }

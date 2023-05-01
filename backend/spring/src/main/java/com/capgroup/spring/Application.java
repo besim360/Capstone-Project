@@ -19,25 +19,19 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 import java.util.ArrayList;
 import java.util.Map;
-
+// http://localhost:9001/article/search?text=query&limit=5 example query
 /**
  * Where application is run. Database and index can be optionally rebuilt here.
- *
  * IMPORTANT WARNING:
- *
  * Uncommenting the currently commented out methods initializeData(args) and buildIndex() and running the app will
  * completely rebuild the database with whatever data is in the folders excelfiles and pdfs (the data in these folders
  * are based on data provided in the dropbox and will likely be out of date if Murphy adds more articles). Rebuilding
  * can take between 5-10 minutes and will leave the database empty if interrupted before completely indexing/finishing.
- *
  * These methods (initializeData(args) and buildIndex()) are important to keep as comments just in case the database
  * needs to be rebuilt.
- *
  * The methods initializeData() and buildIndex() should remain commented out unless you want to completely rebuild the
  * index and database.
  */
-
-// http://localhost:9001/article/search?text=query&limit=5
 
 @SpringBootApplication
 @EntityScan

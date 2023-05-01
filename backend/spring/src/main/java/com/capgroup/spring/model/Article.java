@@ -103,11 +103,19 @@ public class Article {
     @Column(name = "fullText", columnDefinition = "TEXT")
     private String fullText;
 
+    /**
+     * Adds subject to article and maintains many-to-many relationship by adding article to subject
+     * @param subject entity to be added to article's subject list
+     */
     public void addSubject(Subject subject){
         subjects.add(subject);
         subject.getArticles().add(this);
     }
 
+    /**
+     * Removes subject from article and maintains many-to-many relationship by removing article from subject
+     * @param subject entity to be removed from article's subject list
+     */
     public void removeSubject(Subject subject){
         subjects.remove(subject);
         subject.getArticles().remove(this);

@@ -8,13 +8,15 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 
 /**
  * Generic custom access check on request level.
- * NOTE: taken from https://github.com/thomasdarimont/keycloak-project-example
  */
 @Slf4j
 public class AccessController {
 
+    /**
+     * Generic custom access check on request level.
+     * @return boolean for success/failure
+     */
     public boolean checkAccess() {
-
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
 

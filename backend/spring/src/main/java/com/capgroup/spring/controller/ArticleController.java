@@ -206,13 +206,10 @@ public class ArticleController {
         return articleService.searchArticles(text, fieldList, limit);
     }
 
-
+    // Example URL: http://localhost:9001/article/bool?query=writing,nielsen,writing&operators=or,or,or&fields=title,authors,subjects.topics&startYear=2015&endYear=2020&limit=20
     /**
      * Receives and handles boolean search requests. Calls on ArticleService to handle these requests to return a List
      * of articles that match the provided search parameters.
-     *
-     * Example URL: http://localhost:9001/article/bool?query=writing,nielsen,writing&operators=or,or,or&fields=title,authors,subjects.topics&startYear=2015&endYear=2020&limit=20
-     *
      * @param query the list of keyword terms to search
      * @param operators the boolean operators applied to each clause of the search
      * @param fields the fields to search
