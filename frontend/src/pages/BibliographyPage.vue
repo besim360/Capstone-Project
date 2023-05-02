@@ -319,7 +319,7 @@ const edit = async () => {
         selectedBibliography.value.citations[i].fullString = `${citation}`
       }
       if(citation.type === 'Web') {
-        stringCitation = `${citation.author.firstName ? citation.author.firstName : 'No Author'}. ${citation.chapter !== '' ? citation.chapter + '. ' : ''}${citation.title}, Last Modified ${citation.endYear}. ${citation.doi !== '' && citation.doi !== 'N/A' ? citation.doi + '.' : ''}`
+        selectedBibliography.value.citations[i].fullString = `${citation.author.firstName ? citation.author.firstName : 'No Author'}. ${citation.chapter !== '' ? citation.chapter + '. ' : ''}${citation.title}, Last Modified ${citation.endYear}. ${citation.doi !== '' && citation.doi !== 'N/A' ? citation.doi + '.' : ''}`
       }
     }
   } else {
