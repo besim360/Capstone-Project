@@ -318,12 +318,6 @@ const edit = async () => {
       if(citation.type === 'Book' && !citation.fullString) {
         selectedBibliography.value.citations[i].fullString = `${citation}`
       }
-
-      // <span>{{element.author.firstName}}.</span>
-      //             <span v-if="element.chapter">"{{element.chapter}}."</span>
-      //             <span><i>{{" " + element.title}},</i></span>
-      //             <span>{{" Last Modified " + element.endYear}}.</span>
-      //             <span>{{" "+element.doi}}.</span>
       if(citation.type === 'Web') {
         stringCitation = `${citation.author.firstName ? citation.author.firstName : 'No Author'}. ${citation.chapter !== '' ? citation.chapter + '. ' : ''}${citation.title}, Last Modified ${citation.endYear}. ${citation.doi !== '' && citation.doi !== 'N/A' ? citation.doi + '.' : ''}`
       }
