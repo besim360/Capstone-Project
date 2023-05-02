@@ -132,8 +132,19 @@ onMounted( async () => {
       }
       await userapi.post('/bookmarks/base/'+userID, baseData)
     }
+    const userBibliographies = await userapi.get('/bibliographies/'+userID)
+    if(Object.keys(userBibliographies.data).length === 0) {
+      let baseData = {
+        uid: userID,
+        bibliographies: []
+      }
+
+      await userapi.post('/bibliographies/base/'+userID, baseData)
+    }
+
     userStore.setSearchHistory(userHistory.data)
     userStore.setBookmarks(userBookmarks.data)
+    userStore.setBibliographies(userBibliographies.data)
   }
 })
 
@@ -190,8 +201,7 @@ const isAdmin = computed(() => {
 })
 
 const loginHandler = async () => {
-  await AuthService.AuthWrapper.Login('/');
-  router.push('/search')
+  await AuthService.AuthWrapper.Login('/search');
 }
 const logoutHandler = async () => {
   await AuthService.AuthWrapper.Logout();

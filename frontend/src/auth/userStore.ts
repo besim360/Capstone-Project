@@ -2,6 +2,7 @@ import { defineStore } from 'pinia';
 import User from './user';
 import { SearchHistory } from 'src/api/models/history';
 import { UserBookmarks } from 'src/api/models/bookmark';
+import { UserBibliographies } from 'src/api/models/bibliography';
 
 /**
  * Provide a store to manage the state of the user profile
@@ -21,6 +22,11 @@ const useUserStore = defineStore('user', {
         uid: '',
         bookmarkFolders: [],
       } as UserBookmarks,
+      bibliographies: {
+        id: '',
+        uid: '',
+        bibliographies: [],
+      } as UserBibliographies,
     };
   },
   // optional getters
@@ -59,6 +65,10 @@ const useUserStore = defineStore('user', {
 
     setBookmarks(bookmarks: UserBookmarks) {
       this.bookmarks = bookmarks
+    },
+
+    setBibliographies(bibliographies: UserBibliographies) {
+      this.bibliographies = bibliographies
     }
   },
 });

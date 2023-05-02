@@ -52,7 +52,6 @@ const onSubmit = async () => {
         let value = result[keyWithType];
         if (value === null) {
           result = {...result, [keyWithType]: 'N/A'}
-          console.log(result)
           results.data[i] = result
         }
       })

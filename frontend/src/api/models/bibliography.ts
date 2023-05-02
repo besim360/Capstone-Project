@@ -1,7 +1,7 @@
 export type Person = {
   firstName: string;
   lastName: string;
-  middleInitials: string;
+  middleInitial: string;
 }
 
 export type CitationRecord = {
@@ -15,7 +15,7 @@ export type CitationRecord = {
   pages: string;
   doi: string;
   author: Person;
-  contributers: Array<Person>
+  contributers: string;
   version: string;
   number: string;
   publicationLocale: string;
@@ -24,8 +24,9 @@ export type CitationRecord = {
   publisher: string;
   type: string;
   chapter: string;
-  editors: Array<Person>
-  translators: Array<Person>
+  editors: string;
+  translators: string;
+  fullString: string;
 }
 
 export type Bibliography = {

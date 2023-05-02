@@ -17,7 +17,7 @@ class Citation(BaseModel):
     pages: str
     doi: str
     author: Person
-    contributors: List[Person]
+    contributors: str
     version: str
     number: str
     publicationlocale: str
@@ -26,8 +26,9 @@ class Citation(BaseModel):
     publisher: str
     type: str
     chapter: str
-    editors: List[Person]
-    translators: List[Person]
+    editors: str
+    translators: str
+    fullString: str
 
 
 class Bibliography(BaseModel):

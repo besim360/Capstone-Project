@@ -5,9 +5,12 @@ from models.bibliography import Bibliography, Citation
 from config.servers import mongo_conn
 from schemas.user_bibliographies import UserBibliographies as UserBibCreate
 from pydantic import Json
+import pydantic
 from routes.auth import get_auth
 
 bibliographies = APIRouter()
+
+pydantic.json.ENCODERS_BY_TYPE[ObjectId]=str
 
 """
     Utitily function that checks that the passed in UID matches the keycloak token identity
@@ -26,6 +29,7 @@ def retrieve_bibliography_record(uid):
     cur = list(mongo_conn.TechCommSearch.Bibliographies.find({"uid":uid}))
     if len(cur) > 0:
         user_bibliography_record = cur[0]
+
     else:
         user_bibliography_record = {}
     return user_bibliography_record
@@ -38,15 +42,14 @@ async def get_user_bibliographies(uid, identity: Json = Depends(get_auth)):
     check_auth(uid, identity)
     
     user_bibliography_record = retrieve_bibliography_record(uid)
-    
     return user_bibliography_record
 
 """
     Creates a new base bibliographies object with no citation records for a user
 """
 @bibliographies.post('/bibliographies/base/{uid}')
-async def create_base_bibliography_record(uid, identity: Json = Depends(get_auth)):
-    check_auth(uid, identity)
+async def create_base_bibliography_record(uid):
+    # , identity: Json = Depends(get_auth) check_auth(uid, identity)
     user_bibliography_record = retrieve_bibliography_record(uid)
 
     if not bool(user_bibliography_record):
@@ -167,6 +170,7 @@ async def update_citation(uid, bid, cid, citation: Citation, identity: Json = De
             'bibliographies.$[bibliography].citations.$[citation].chapter': t['chapter'],
             'bibliographies.$[bibliography].citations.$[citation].editors': t['editors'],
             'bibliographies.$[bibliography].citations.$[citation].translators': t['translators'],
+            'bibliographies.$[bibliography].citations.$[citation].fullString': t['fullString'],
         }},
         array_filters=[
             {"bibliography._id": ObjectId(bid)},

@@ -102,6 +102,7 @@ import { SearchRecord } from 'src/api/models/search';
 import { AxiosInstance } from 'axios';
 import useUserStore from 'src/auth/userStore';
 import { Bookmark } from 'src/api/models/bookmark';
+import AuthService from 'src/auth/AuthService';
 
 const props = defineProps<{
   type: string
@@ -211,6 +212,29 @@ const performAdvancedSearch = async () => {
   }
 
   const results = await searchapi.get(`article/bool?query=${query}&operators=${operators}&fields=${fields}&limit=100`)
+  if (userStore.loggedIn) {
+    const userID = AuthService.AuthWrapper.User.auth_id;
+    for (let i = 0; i < results.data.length; i++) {
+      let result: SearchRecord = results.data[i]
+      Object.keys(result).forEach(key => {
+        const keyWithType = key as keyof typeof result;
+        let value = result[keyWithType];
+        if (value === null) {
+          result = {...result, [keyWithType]: 'N/A'}
+          results.data[i] = result
+        }
+      })
+    }
+    const historyData = {
+      uid: userID,
+      query: searchStore.queryLine[0].queryText,
+      queryDate: new Date(),
+      results: results.data
+    }
+    await userapi.post('/history/', historyData);
+    const userHistory = await userapi.get('/history/'+userID)
+    userStore.setSearchHistory(userHistory.data)
+  }
   searchStore.setResults(results.data);
 }
 

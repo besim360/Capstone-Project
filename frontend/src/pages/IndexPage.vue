@@ -6,13 +6,7 @@
           <h3>Welcome!</h3>
         </div>
         <div class="col-6 center-col">
-          <!-- <router-link
-            :to=""
-            custom
-            v-slot:default="props"
-          >
-            <q-btn v-bind="buttonProps(props)"></q-btn>
-          </router-link> -->
+          <q-btn label="Login" color="primary" size="lg" @click="loginHandler"/>
         </div>
         <div class="col-6 center-col">
           <q-btn label="Search as Guest" class="bg-secondary" text-color="white" size="lg" @click="guestSearchHandler"></q-btn>
@@ -45,7 +39,7 @@
     </div>
     <div class="ribbon bg-primary feedback-ribbon row">
       <div class="row" style="width: 50% !important">
-        <div class="col-12" style="padding-bottom: 25px">
+        <!-- <div class="col-12" style="padding-bottom: 25px">
           <h6 style="color: white;">Overall, how happy are you with the software?</h6>
         </div>
         <div class="col-1 offset-1 happiness-indicator">
@@ -77,7 +71,7 @@
         </div>
         <div class="col-1 happiness-indicator">
           <span class="i-span" value="10">10</span>
-        </div>
+        </div> -->
         <div class="col-6" style="padding-bottom: 25px">
           <h6 style="color: white;">Send us your comments and suggestions</h6>
           <q-input v-model="email" label="Email" label-color="white" color="white" filled dark/>
@@ -94,6 +88,7 @@
 </template>
 
 <script setup lang="ts">
+import AuthService from 'src/auth/AuthService';
 import { ref } from 'vue';
 import {useRouter } from 'vue-router';
 const router = useRouter();
@@ -104,15 +99,8 @@ const guestSearchHandler = () => {
   router.push('/search')
 }
 
-const buttonProps = ({href}) => {
-  const props = {
-    label: 'Login',
-    class: 'bg-primary',
-    textColor: 'white',
-    size: 'lg',
-    to: href
-  }
-  return props
+const loginHandler = () => {
+  AuthService.AuthWrapper.Login('/search');
 }
 </script>
 
@@ -169,7 +157,7 @@ const buttonProps = ({href}) => {
   width: 50%;
 }
 .feedback-ribbon {
-  height: 800px !important;
+  height: 500px !important;
 }
 
 .happiness-indicator {

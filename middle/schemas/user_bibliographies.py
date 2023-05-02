@@ -2,9 +2,9 @@ from typing import Dict
 
 def PersonEntity(item) -> Dict:
     return {
-        "firstName": str(item["firstName"]),
-        "lastName": str(item["lastName"]),
-        "middleInitial": str(item["middleInitial"])
+        "firstName": item["firstName"],
+        "lastName": item["lastName"],
+        "middleInitial": item["middleInitial"]
     }
 
 def flatten_persons(entity) -> list:
@@ -15,21 +15,6 @@ def CitationEntity(item) -> Dict:
         author = PersonEntity(item["author"])
     else:
         author = {"firstName": "", "lastName": "", "middleInitial": ""}
-
-    if "contributors" in item:
-        contributers = flatten_persons(item["contributors"])
-    else:
-        contributers = []
-
-    if "editors" in item:
-        editors = flatten_persons(item["editors"])
-    else:
-        editors = []
-    
-    if "translators" in item:
-        translators = flatten_persons(item["translators"])
-    else:
-        translators = []
     
     return {
         "id": str(item["_id"]),
@@ -42,7 +27,7 @@ def CitationEntity(item) -> Dict:
         "pages": str(item["pages"]),
         "doi": str(item["doi"]),
         "author": author,
-        "contributors": contributers,
+        "contributors": str(item['contributors']),
         "version": str(item["version"]),
         "number": str(item["number"]),
         "pages": str(item["pages"]),
@@ -52,8 +37,8 @@ def CitationEntity(item) -> Dict:
         "publisher": str(item["publisher"]),
         "type": str(item["type"]),
         "chapter": str(item["chapter"]),
-        "editors": editors,
-        "translators": translators,
+        "editors": str(item['editors']),
+        "translators": str(item['translators'])
     }
 
 def flatten_citations(entity) -> list:
@@ -78,7 +63,6 @@ def UserBibliographies(item) -> Dict:
     iCpy = item
 
     hasElement = len(list(iCpy)) > 0
-
     if hasElement == True:
         if "bibliographies" in item:
             bibliographies = flatten_bibliographies(item["bibliographies"])
