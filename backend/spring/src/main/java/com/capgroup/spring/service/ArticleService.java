@@ -21,7 +21,9 @@ import java.util.*;
 
 
 /**
- * The business layer
+ * The business layer that handles all requests to the articleRepository,
+ * requires a reference to subjectService because certain transactions need
+ * to add and remove subjects to articles and work with the subjectRepository
  */
 @Service
 @Slf4j
@@ -37,12 +39,18 @@ public class ArticleService {
 
     private static final List<String> SEARCHABLE_FIELDS = Arrays.asList("title", "authors", "sourceLong",
             "subjects.topics", "doi", "sourceAbbrev", "subjects.subjectCode", "subjects.generalTopic", "fullText");
-    //private static final List<String> NUMERIC_FIELDS = Arrays.asList("subjects.subjectCode", "startYear", "endYear");
 
     public ArticleService(@NonNull ArticleRepository articleRepository) {
         this.articleRepository = articleRepository;
     }
 
+    /**
+     * Passes valid searches to article repository
+     * @param text text so be searched for
+     * @param fields fields for text to be searched in
+     * @param limit number of elements to return
+     * @return valid hits from query
+     */
     @Transactional(readOnly = true)
     public List<Article> searchArticles(String text, List<String> fields, Integer limit) {
 
@@ -57,10 +65,27 @@ public class ArticleService {
                 text, limit, fieldsToSearchBy.toArray(new String[0]));
     }
 
+    /**
+     * Add new article to database, ID is automatically generated when saves to repository, so it does not check
+     * if an identical article is already present in database
+     * @param title Title of article (required)
+     * @param authors Authors of article
+     * @param sourceAbbrev Abbreviated source article was published by
+     * @param sourceLong Full source name article was published by
+     * @param volNum Volume number of article
+     * @param date Month/Day of article
+     * @param startYear Starting year article was published
+     * @param endYear End year article was published
+     * @param pages Pages of article (often used for journals)
+     * @param subjectCodes IDs of subjects to be associated with article
+     * @param doi DOI number of article
+     * @param file PDF file to be processed for full-text search on article
+     * @return boolean of success/failure
+     */
     @Transactional(readOnly = false)
     public boolean addArticle(String title, String authors, String sourceAbbrev, String sourceLong, String volNum,
                            String date, Integer startYear, Integer endYear, String pages,
-                              String subjectCodes, String doi, MultipartFile file) { //can create article here, then save
+                              String subjectCodes, String doi, MultipartFile file) {
         Article article = new Article();
         if (title != null) {
             article.setTitle(title);
@@ -113,6 +138,24 @@ public class ArticleService {
         return true;
     }
 
+    /**
+     * Update existing article in database
+     * @param id ID of article
+     * @param title Title of article
+     * @param authors Authors of article
+     * @param sourceAbbrev Abbreviated source of article
+     * @param sourceLong Full source name of article
+     * @param volNum Volume number of article
+     * @param date Month/Day of article
+     * @param startYear Starting year article was published
+     * @param endYear End year article was published
+     * @param pages Pages of article (often used for journals)
+     * @param subjectCodesToAdd Subject codes to be added to article
+     * @param subjectCodesToRemove Subject codes to be removed from article
+     * @param doi DOI of article
+     * @param file File stream of article to be parsed for full-text search
+     * @return
+     */
     @Transactional(readOnly = false)
     public boolean updateArticle(Long id, String title, String authors, String sourceAbbrev,
                                  String sourceLong, String volNum, String date, Integer startYear, Integer endYear,
@@ -181,31 +224,32 @@ public class ArticleService {
         return true;
     }
 
+    /**
+     * Delete article by ID, assumes exists and cannot be reverted
+     * @param id ID of article
+     */
     @Transactional(readOnly = false)
-    public void deleteArticle(Long id) { //likely rename to only pass article id
-        articleRepository.deleteById(id); //may need to wrap in a try/catch
+    public void deleteArticle(Long id) {
+        articleRepository.deleteById(id);
     }
 
 
-
-    /*
-
-    This is the version that splits text, boolOps and fields into separate lists
-    public List<Article> boolSearchArticles(List<String> text, List<String> boolOps, List<String> fields, int limit){
-
-        List<String> fieldsToSearchBy = fields.isEmpty() ? SEARCHABLE_FIELDS : fields;
-
-
-        boolean containsInvalidField = fields.stream(). anyMatch(f -> !SEARCHABLE_FIELDS.contains(f));
-        if (containsInvalidField){
-            throw new IllegalArgumentException();
-        }
-
-        return articleRepository.boolSearchBy(text, boolOps, fieldsToSearchBy, limit);
-    }*/
-
-
-
+    /**
+     *
+     * Interacts with the article repository to request a boolean or advanced search with the given parameters. Each clause
+     * or sub-query should have at least three attributes: the term (which is given in the query parameter), the
+     * boolean operator and the field. A clause of the total boolean search will correspond to an index of these Lists.
+     * So, a clause's query, boolean operator, and field will all be in index i of given lists. Therefore, all Lists
+     * should be the same length.
+     *
+     * @param query a list of Strings that are the actual terms being searched for
+     * @param operators the boolean operators being applied to those searches (AND, OR, NOT)
+     * @param fields the attributes of the article that the search will look at for the queries (authors, topics, etc.)
+     * @param startYear the earliest year that the returned articles should be published in (null if no such parameter)
+     * @param endYear the latest year that the returned articles should be published in (null if no such parameter)
+     * @param limit the maximum number of articles that should be returned.
+     * @return a List of articles
+     */
     @Transactional(readOnly = true)
     public List<Article> boolSearchArticles(List<String> query, List<String> operators, List<String> fields,
                                             Integer startYear, Integer endYear, Integer limit) {

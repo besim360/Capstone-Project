@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 /**
  * Allows to extract granted authorities from a given JWT. The authorities
  * are determined by combining the realm (overarching) and client (application-specific)
- * roles, and normalizing them (configure them to the default format). NOTE: taken from https://github.com/thomasdarimont/keycloak-project-example
+ * roles, and normalizing them (configure them to the default format).
  */
 
 public class KeycloakGrantedAuthoritiesConverter implements Converter<Jwt, Collection<GrantedAuthority>> {

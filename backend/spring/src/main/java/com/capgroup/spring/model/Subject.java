@@ -8,17 +8,19 @@ import org.hibernate.search.engine.backend.types.Searchable;
 import org.hibernate.search.mapper.pojo.mapping.definition.annotation.FullTextField;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.search.mapper.pojo.mapping.definition.annotation.Indexed;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
+
+/**
+ * Subject entity that will be embedded into articles for categorization purposes
+ */
 
 @Entity
 @Getter
 @Setter
 @ToString
 @Transactional
-//@Indexed(index = "SubjectIndex")
 @Table(name = "subjects")
 public class Subject {
 
@@ -34,6 +36,9 @@ public class Subject {
 
     @FullTextField
     @Column(name = "topics", columnDefinition = "VARCHAR(2048)")
+    // NOTE: Topics could be stored in the future as a list of strings rather than a single string so that the
+    // formatted output can demarcate different topics, if so, the way topics are parsed must be changed in both
+    // DataInput's getSubjects() method and any methods that manipulate subjects in ArticleController
     private String topics;
 
     @ManyToMany(mappedBy = "subjects", fetch = FetchType.LAZY,

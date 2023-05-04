@@ -11,7 +11,7 @@ import java.util.Collection;
 /**
  * Converts a JWT into a Spring authentication token (by extracting
  * the username and roles from the claims of the token, delegating
- * to the {@link KeycloakGrantedAuthoritiesConverter}) NOTE: taken from https://github.com/thomasdarimont/keycloak-project-example
+ * to the {@link KeycloakGrantedAuthoritiesConverter})
  */
 @RequiredArgsConstructor
 public class KeycloakJwtAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {

@@ -16,7 +16,4 @@ public interface SearchRepository<T, ID> extends JpaRepository<T, ID> {
 
     List<T> boolSearchBy(List<String> query, List<String> operators, List<String> fields, Integer startYear,
                          Integer endYear, Integer limit);
-
-
-    //List<T> boolSearchBy(List<String> text, List<String> boolOps, List<String> fields, int limit);
 }
