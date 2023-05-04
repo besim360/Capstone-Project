@@ -196,7 +196,7 @@
     </div>
     <div class="header-actions">
       <div class="header-container row">
-        <div class="col-12">
+        <div class="col-12" v-if="!noBibliographies">
           <q-btn rounded label="Create New Bibliography" class="bg-primary" text-color="white" size="md" @click="createBib = true" />
           <q-dialog v-model="createBib" persistent >
             <q-card style="min-width: 350px;">
