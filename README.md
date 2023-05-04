@@ -56,3 +56,4 @@ uvicorn index:app --reload
 - If database index is already present, ensure it is not rebuilt as it is currently additive and leaving the beans uncommented can double the size of the database every time
 - Run spring-boot:run command through IntelliJ or Maven
 - NOTE: IntelliJ is preconfigured for JDK version 19.0, although later versions should not have any issues
+- WARNING: Make sure no existing version of /data/ or /database/ is present in /backend/spring/ before extracting an archived version of the database otherwise corruption errors may occur
